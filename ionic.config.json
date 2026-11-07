@@ -1,0 +1,7 @@
+{
+  "name": "ws07_cs",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
