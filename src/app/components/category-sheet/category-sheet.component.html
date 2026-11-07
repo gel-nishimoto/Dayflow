@@ -1,0 +1,228 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>{{ headerTitle }}</ion-title>
+    <button type="button" slot="end" class="cat-close" aria-label="Close" (click)="close()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="cat-sheet">
+    @if (view() === 'list') {
+      <div class="cat-top-actions">
+        <button type="button" class="pill-btn" (click)="openAddCategory()">
+          <ion-icon name="add-outline"></ion-icon> Add New Category
+        </button>
+        <button type="button" class="pill-btn ghost" (click)="view.set('manage')">
+          <ion-icon name="options-outline"></ion-icon> Manage Categories
+        </button>
+      </div>
+
+      @if (mode === 'filter') {
+        <button
+          type="button"
+          class="cat-row"
+          [class.active]="chosen() === 'all'"
+          (click)="pickCategory('all')"
+        >
+          <span class="cat-ic" style="background: var(--app-light-blue); color: var(--app-primary)">
+            <ion-icon name="layers-outline"></ion-icon>
+          </span>
+          <span class="cat-name">All Categories</span>
+          @if (chosen() === 'all') {
+            <ion-icon name="checkmark-circle" class="tick"></ion-icon>
+          }
+        </button>
+      }
+
+      <p class="cat-group-label">ACADEMIC</p>
+      <div class="cat-grid">
+        @for (c of academicCategories(); track c.id) {
+          <button
+            type="button"
+            class="cat-row"
+            [class.active]="chosen() === c.name"
+            (click)="pickCategory(c.name)"
+          >
+            <span class="cat-ic" [style.color]="c.color">
+              <ion-icon [name]="c.icon"></ion-icon>
+            </span>
+            <span class="cat-name">{{ c.name }}</span>
+            @if (chosen() === c.name) {
+              <ion-icon name="checkmark-circle" class="tick"></ion-icon>
+            }
+          </button>
+        }
+      </div>
+
+      <p class="cat-group-label">PERSONAL</p>
+      <div class="cat-grid">
+        @for (c of personalCategories(); track c.id) {
+          <button
+            type="button"
+            class="cat-row"
+            [class.active]="chosen() === c.name"
+            (click)="pickCategory(c.name)"
+          >
+            <span class="cat-ic" [style.color]="c.color">
+              <ion-icon [name]="c.icon"></ion-icon>
+            </span>
+            <span class="cat-name">{{ c.name }}</span>
+            @if (chosen() === c.name) {
+              <ion-icon name="checkmark-circle" class="tick"></ion-icon>
+            }
+          </button>
+        }
+      </div>
+    } @else if (view() === 'manage') {
+      <div class="cat-top-actions">
+        <button type="button" class="pill-btn" (click)="openAddCategory()">
+          <ion-icon name="add-outline"></ion-icon> Add New Category
+        </button>
+        @if (mode !== 'manage') {
+          <button type="button" class="pill-btn ghost" (click)="view.set('list')">
+            Back to Selection
+          </button>
+        }
+      </div>
+
+      <p class="cat-group-label">ACADEMIC</p>
+      <div class="cat-grid">
+        @for (c of academicCategories(); track c.id) {
+          <div class="cat-row manage">
+            <span class="cat-ic" [style.color]="c.color">
+              <ion-icon [name]="c.icon"></ion-icon>
+            </span>
+            <span class="cat-name">{{ c.name }}</span>
+            <button type="button" class="icon-act" [attr.aria-label]="'Edit ' + c.name" (click)="openEditCategory(c)">
+              <ion-icon name="create-outline"></ion-icon>
+            </button>
+            <button
+              type="button"
+              class="icon-act danger"
+              [attr.aria-label]="'Delete ' + c.name"
+              (click)="confirmDeleteCategory(c)"
+            >
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+        }
+      </div>
+
+      <p class="cat-group-label">PERSONAL</p>
+      <div class="cat-grid">
+        @for (c of personalCategories(); track c.id) {
+          <div class="cat-row manage">
+            <span class="cat-ic" [style.color]="c.color">
+              <ion-icon [name]="c.icon"></ion-icon>
+            </span>
+            <span class="cat-name">{{ c.name }}</span>
+            <button type="button" class="icon-act" [attr.aria-label]="'Edit ' + c.name" (click)="openEditCategory(c)">
+              <ion-icon name="create-outline"></ion-icon>
+            </button>
+            @if (c.name !== 'Others') {
+              <button
+                type="button"
+                class="icon-act danger"
+                [attr.aria-label]="'Delete ' + c.name"
+                (click)="confirmDeleteCategory(c)"
+              >
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    } @else {
+      <!-- Add / Edit Category Sub-form -->
+      <div class="cat-form">
+        <div class="field">
+          <label for="catNameInput">Category Name</label>
+          <input
+            id="catNameInput"
+            class="input"
+            type="text"
+            placeholder="e.g. Lab Work"
+            [(ngModel)]="catName"
+            (input)="nameError = false"
+          />
+          @if (nameError) {
+            <p class="err-msg">Please enter a category name.</p>
+          }
+        </div>
+
+        <div class="field">
+          <span class="lbl">Group</span>
+          <div class="seg-row">
+            <button
+              type="button"
+              class="seg-btn"
+              [class.active]="catGroup === 'Academic'"
+              (click)="catGroup = 'Academic'"
+            >
+              Academic
+            </button>
+            <button
+              type="button"
+              class="seg-btn"
+              [class.active]="catGroup === 'Personal'"
+              (click)="catGroup = 'Personal'"
+            >
+              Personal
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="lbl">Category Icon (Optional)</span>
+          <div class="icon-grid">
+            @for (ic of icons; track ic) {
+              <button
+                type="button"
+                class="ic-pick"
+                [class.active]="catIcon === ic"
+                (click)="catIcon = ic"
+              >
+                <ion-icon [name]="ic"></ion-icon>
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="lbl">Category Color (Optional)</span>
+          <div class="color-row">
+            @for (col of colors; track col) {
+              <button
+                type="button"
+                class="color-dot"
+                [style.background]="col"
+                [class.active]="catColor === col"
+                [attr.aria-label]="'Select color ' + col"
+                (click)="catColor = col"
+              ></button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</ion-content>
+
+@if (view() === 'form') {
+  <ion-footer class="ion-no-border">
+    <div class="cat-footer">
+      <button type="button" class="btn btn-ghost" (click)="cancelForm()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="saveCategory()">Save Category</button>
+    </div>
+  </ion-footer>
+} @else if (mode === 'filter' && view() === 'list') {
+  <ion-footer class="ion-no-border">
+    <div class="cat-footer">
+      <button type="button" class="btn btn-ghost" (click)="clearFilter()">Clear Filter</button>
+      <button type="button" class="btn btn-primary" (click)="applyFilter()">Apply Filter</button>
+    </div>
+  </ion-footer>
+}
+

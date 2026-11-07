@@ -1,0 +1,80 @@
+<ion-content [fullscreen]="true">
+  <div class="screen">
+    <h1 class="screen-title">Profile</h1>
+
+    <section class="hero">
+      <div class="avatar">{{ initials() }}</div>
+      <h2>{{ name() }}</h2>
+      <p>{{ completed() }} tasks completed</p>
+    </section>
+
+    <section class="group">
+      @for (i of info; track i.label) {
+        <div class="row">
+          <span class="icon"><ion-icon [name]="i.icon"></ion-icon></span>
+          <div class="text">
+            <span class="small">{{ i.label }}</span>
+            <span class="value">{{ i.value }}</span>
+          </div>
+        </div>
+      }
+    </section>
+
+    <h3 class="group-title">Preferences</h3>
+    <section class="group">
+      <div class="row">
+        <div class="text"><span class="value">Daily reminder</span></div>
+        <ion-toggle
+          aria-label="Daily reminder"
+          [(ngModel)]="dailyReminder"
+          (ionChange)="onPreference('Daily reminder', dailyReminder)"
+        ></ion-toggle>
+      </div>
+      <div class="row">
+        <div class="text"><span class="value">Sound alerts</span></div>
+        <ion-toggle
+          aria-label="Sound alerts"
+          [(ngModel)]="soundAlerts"
+          (ionChange)="onPreference('Sound alerts', soundAlerts)"
+        ></ion-toggle>
+      </div>
+    </section>
+
+    <h3 class="group-title">Settings</h3>
+    <section class="group">
+      <button type="button" class="row link" (click)="editProfile()">
+        <span class="icon"><ion-icon name="create-outline"></ion-icon></span>
+        <span class="text"><span class="value">Edit Profile</span></span>
+        <ion-icon class="chev" name="chevron-forward-outline"></ion-icon>
+      </button>
+      <button type="button" class="row link" (click)="changePassword()">
+        <span class="icon"><ion-icon name="lock-closed-outline"></ion-icon></span>
+        <span class="text"><span class="value">Change Password</span></span>
+        <ion-icon class="chev" name="chevron-forward-outline"></ion-icon>
+      </button>
+      <button
+        type="button"
+        class="row link"
+        (click)="showInfo('Help & Support', 'Need help? Contact support@dayflow.demo (demo only).')"
+      >
+        <span class="icon"><ion-icon name="help-circle-outline"></ion-icon></span>
+        <span class="text"><span class="value">Help &amp; Support</span></span>
+        <ion-icon class="chev" name="chevron-forward-outline"></ion-icon>
+      </button>
+      <button
+        type="button"
+        class="row link"
+        (click)="showInfo('About', 'Dayflow v0.1 - UI prototype with sample data.')"
+      >
+        <span class="icon"><ion-icon name="information-circle-outline"></ion-icon></span>
+        <span class="text"><span class="value">About</span></span>
+        <ion-icon class="chev" name="chevron-forward-outline"></ion-icon>
+      </button>
+    </section>
+
+    <button type="button" class="logout" (click)="logout()">
+      <ion-icon name="log-out-outline"></ion-icon> Log out
+    </button>
+  </div>
+</ion-content>
+

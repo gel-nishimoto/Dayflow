@@ -1,0 +1,60 @@
+<ion-content [fullscreen]="true">
+  <div class="screen">
+    <h1 class="screen-title">Calendar</h1>
+
+    <div class="month-bar">
+      <button type="button" class="nav" aria-label="Previous week" (click)="shiftWeek(-1)">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+      <h2>{{ monthLabel() }}</h2>
+      <button type="button" class="nav" aria-label="Next week" (click)="shiftWeek(1)">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+
+    <div class="week">
+      @for (d of days(); track d.iso) {
+        <button
+          type="button"
+          class="day"
+          [class.selected]="d.iso === selected()"
+          [class.today]="d.iso === today"
+          (click)="selected.set(d.iso)"
+        >
+          <span class="name">{{ d.name }}</span>
+          <span class="num">{{ d.num }}</span>
+          <span class="dot" [class.on]="d.hasActivity"></span>
+        </button>
+      }
+    </div>
+
+    <section>
+      <div class="list-head">
+        <h3>{{ selectedLabel() }}</h3>
+        <span class="count">{{ items().length }} {{ items().length === 1 ? 'activity' : 'activities' }}</span>
+      </div>
+
+      <div class="list">
+        @for (task of items(); track task.id) {
+          <app-task-item
+            [task]="task"
+            (toggle)="actions.toggle($event)"
+            (openTask)="actions.openDetail($event)"
+          ></app-task-item>
+        } @empty {
+          <div class="empty">
+            <ion-icon name="calendar-clear-outline"></ion-icon>
+            <p>Nothing scheduled for this day.</p>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button aria-label="Add activity" (click)="actions.openForm(undefined, selected())">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+

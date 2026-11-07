@@ -1,37 +1,745 @@
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
-/* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
-
-/* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* Dark mode disabled: the app uses a fixed blue and white theme. */
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* ---------- Shared app styles ---------- */
+ion-content {
+  --background: var(--app-bg);
+}
+
+.screen {
+  padding: var(--app-space-4) var(--app-space-5) 96px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-space-5);
+}
+
+.screen-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.badge {
+  flex: none;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  padding: 4px 10px;
+  border-radius: var(--app-radius-pill);
+  background: var(--app-light-blue);
+  color: var(--app-primary);
+
+  &.completed {
+    background: var(--app-green);
+    color: var(--app-green-text);
+  }
+  &.pending {
+    background: var(--app-amber);
+    color: var(--app-amber-text);
+  }
+  &.cancelled {
+    background: #eef0f4;
+    color: var(--app-text-muted);
+  }
+}
+
+.btn {
+  flex: 1;
+  height: 50px;
+  border-radius: 16px;
+  border: 1.5px solid transparent;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  transition: transform 0.15s ease, opacity 0.2s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+.btn-primary {
+  background: var(--app-primary);
+  color: #fff;
+}
+.btn-ghost {
+  background: var(--app-card);
+  color: var(--app-text);
+  border-color: #e3e9f3;
+}
+.btn-danger {
+  background: var(--app-red);
+  color: var(--app-red-text);
+}
+
+ion-fab-button {
+  --background: var(--app-primary);
+  --box-shadow: 0 8px 20px rgba(57, 121, 216, 0.35);
+}
+
+ion-toast.app-toast {
+  --background: #26354a;
+  --color: #ffffff;
+  --border-radius: 16px;
+  font-weight: 500;
+}
+
+.empty {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--app-text-muted);
+  font-size: 14px;
+
+  ion-icon {
+    font-size: 40px;
+    color: var(--app-secondary);
+  }
+  p {
+    margin: 8px 0 0;
+  }
+}
+
+/* ---------- Capsule/Pill Action Buttons (Photo & Location) ---------- */
+.capsule-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-pill {
+  flex: 1 1 135px;
+  height: 42px;
+  padding: 0 16px;
+  border-radius: var(--app-radius-pill);
+  border: 1.5px solid #c7dcfa;
+  background: var(--app-light-blue);
+  color: var(--app-primary);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: all 0.15s ease;
+
+  ion-icon {
+    font-size: 18px;
+  }
+  &:active {
+    transform: scale(0.97);
+    background: #dbe9ff;
+  }
+  &.filled {
+    border-color: var(--app-primary);
+    background: #dfecff;
+  }
+}
+
+/* ---------- Square Thumbnail Grid (Photos & Video) ---------- */
+.media-block {
+  background: var(--app-card);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: var(--app-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.media-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+
+  .media-title {
+    font-weight: 700;
+    color: var(--app-text);
+  }
+  .media-cap {
+    font-weight: 600;
+    color: var(--app-primary);
+  }
+}
+
+.sq-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.sq-tile {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1.5px solid #e3e9f3;
+  background: var(--app-light-blue);
+  padding: 0;
+  cursor: pointer;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.sq-remove {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(38, 53, 74, 0.82);
+  color: #fff;
+  font-size: 15px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.sq-add {
+  border: 1.5px dashed var(--app-secondary);
+  background: var(--app-light-blue);
+  color: var(--app-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+
+  ion-icon {
+    font-size: 22px;
+  }
+}
+
+.video-tile {
+  .play-ov {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 36px;
+    background: rgba(17, 26, 39, 0.25);
+    pointer-events: none;
+  }
+  .vid-tag {
+    position: absolute;
+    left: 6px;
+    bottom: 6px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: rgba(17, 26, 39, 0.78);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+}
+
+/* ---------- Location Preview Card ---------- */
+.loc-card,
+.loc {
+  background: var(--app-card);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: var(--app-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  p {
+    margin: 0;
+  }
+  .place-name,
+  .loc-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--app-text);
+  }
+  .hint,
+  .loc-addr {
+    font-size: 12px;
+    color: var(--app-text-muted);
+  }
+  .view {
+    flex: none;
+    height: 42px;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+  }
+}
+
+.loc {
+  margin-bottom: var(--app-space-4);
+  background: var(--app-bg);
+  box-shadow: none;
+}
+
+.mini-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mini {
+  flex: 1 1 auto;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1.5px solid #e3e9f3;
+  background: var(--app-card);
+  color: var(--app-text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  &.primary {
+    background: var(--app-primary);
+    border-color: var(--app-primary);
+    color: #fff;
+  }
+  &.danger {
+    background: var(--app-red);
+    border-color: var(--app-red);
+    color: var(--app-red-text);
+  }
+}
+
+/* ---------- Schedule Section & Shortcuts ---------- */
+.section-box {
+  background: var(--app-card);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: var(--app-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .sec-heading {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--app-text);
+  }
+}
+
+.date-shortcuts,
+.ref-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.sc-pill {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--app-radius-pill);
+  border: 1.5px solid #dbe6f5;
+  background: var(--app-bg);
+  color: var(--app-text-muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  &.active {
+    background: var(--app-primary);
+    border-color: var(--app-primary);
+    color: #fff;
+  }
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.lbl-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+
+  label,
+  .label {
+    margin-bottom: 0;
+  }
+}
+
+.clear-link {
+  border: 0;
+  background: transparent;
+  color: var(--app-primary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0;
+}
+
+/* ---------- Category Selector & Category Sheet ---------- */
+.cat-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  border: 1.5px solid #e3e9f3;
+  background: var(--app-card);
+  font-family: inherit;
+  text-align: left;
+
+  .cat-badge-ic {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--app-light-blue);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+  }
+  .cat-sel-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .cat-sel-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--app-text);
+  }
+  .cat-sel-group {
+    font-size: 11px;
+    color: var(--app-text-muted);
+  }
+  .chev {
+    color: var(--app-text-muted);
+  }
+}
+
+.cat-top-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.pill-btn {
+  flex: 1 1 auto;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: var(--app-radius-pill);
+  border: 1.5px solid var(--app-primary);
+  background: var(--app-light-blue);
+  color: var(--app-primary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  &.ghost {
+    border-color: #d8e3f2;
+    background: var(--app-card);
+    color: var(--app-text);
+  }
+}
+
+.cat-group-label {
+  margin: 14px 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--app-text-muted);
+}
+
+.cat-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1.5px solid #e3e9f3;
+  background: var(--app-card);
+  font-family: inherit;
+  text-align: left;
+
+  &.active {
+    border-color: var(--app-primary);
+    background: var(--app-light-blue);
+  }
+  .cat-ic {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--app-bg);
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+  }
+  .cat-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--app-text);
+  }
+  .tick {
+    font-size: 20px;
+    color: var(--app-primary);
+  }
+}
+
+.icon-act {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 0;
+  background: var(--app-bg);
+  color: var(--app-text);
+  font-size: 17px;
+  display: grid;
+  place-items: center;
+
+  &.danger {
+    background: var(--app-red);
+    color: var(--app-red-text);
+  }
+}
+
+.cat-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .lbl,
+  label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--app-text);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .err-msg {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: var(--app-red-text);
+  }
+}
+
+.seg-row {
+  display: flex;
+  gap: 8px;
+}
+
+.seg-btn {
+  flex: 1;
+  height: 42px;
+  border-radius: 12px;
+  border: 1.5px solid #e3e9f3;
+  background: var(--app-card);
+  color: var(--app-text-muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  &.active {
+    border-color: var(--app-primary);
+    background: var(--app-light-blue);
+    color: var(--app-primary);
+  }
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.ic-pick {
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  border: 1.5px solid #e3e9f3;
+  background: var(--app-card);
+  color: var(--app-text);
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+
+  &.active {
+    border-color: var(--app-primary);
+    background: var(--app-light-blue);
+    color: var(--app-primary);
+  }
+}
+
+.color-row {
+  display: flex;
+  gap: 12px;
+}
+
+.color-dot {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+
+  &.active {
+    border-color: var(--app-text);
+    transform: scale(1.08);
+  }
+}
+
+/* ---------- Reminder Card ---------- */
+.reminder-card {
+  background: var(--app-card);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: var(--app-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reminder-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  p {
+    margin: 0;
+  }
+  .reminder-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--app-text);
+  }
+  .reminder-sub {
+    font-size: 12px;
+    color: var(--app-text-muted);
+    margin-top: 2px;
+  }
+}
+
+.reminder-body {
+  border-top: 1px solid #eef2f8;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rem-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--app-amber);
+  color: var(--app-amber-text);
+  font-size: 12px;
+  font-weight: 500;
+
+  ion-icon {
+    flex: none;
+    font-size: 18px;
+  }
+}
+
+.rem-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .rem-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--app-text);
+  }
+}
+
+.custom-rem-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  label {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--app-text);
+  }
+  .min-input {
+    width: 96px;
+    height: 40px;
+    text-align: center;
+  }
+}
+
+.rem-selected-banner {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--app-light-blue);
+  color: var(--app-primary);
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  ion-icon {
+    font-size: 16px;
+  }
+}

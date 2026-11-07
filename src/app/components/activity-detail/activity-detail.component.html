@@ -1,0 +1,130 @@
+<ion-content>
+  @if (activity; as a) {
+    <div class="sheet">
+      <!-- 1. BASIC INFORMATION -->
+      <div class="top">
+        <span class="badge" [class]="a.status">{{ a.status }}</span>
+        <span class="cat-pill">
+          <ion-icon [name]="getCategoryMeta(a.category).icon" [style.color]="getCategoryMeta(a.category).color"></ion-icon>
+          <span>{{ a.category }}</span>
+        </span>
+        <button type="button" class="close" aria-label="Close details" (click)="close()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <h2>{{ a.title }}</h2>
+      @if (a.description) {
+        <p class="desc">{{ a.description }}</p>
+      }
+
+      <!-- 2. SCHEDULE -->
+      <p class="label">Schedule</p>
+      <div class="rows">
+        <div class="row">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>Scheduled Date</span>
+          <strong>{{ a.date | dateLabel }}</strong>
+        </div>
+        @if (a.time) {
+          <div class="row">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>Scheduled Time</span>
+            <strong>{{ a.time | time12 }}</strong>
+          </div>
+        }
+        @if (a.deadline) {
+          <div class="row">
+            <ion-icon name="flag-outline"></ion-icon>
+            <span>Deadline</span>
+            <strong>{{ a.deadline | dateLabel }}</strong>
+          </div>
+        }
+      </div>
+
+      <!-- 3. ATTACHMENTS (Only shown if photos or video exist) -->
+      @if ((a.photos && a.photos.length > 0) || a.video) {
+        <p class="label">Attachments</p>
+        @if (a.video; as vid) {
+          <div class="sq-grid detail-grid">
+            <button
+              type="button"
+              class="sq-tile video-tile"
+              aria-label="Open video preview"
+              (click)="openVideo(vid)"
+            >
+              <img [src]="vid.thumb" [alt]="vid.title" />
+              <span class="play-ov"><ion-icon name="play-circle"></ion-icon></span>
+              <span class="vid-tag">
+                <ion-icon name="videocam-outline"></ion-icon> {{ vid.duration }}
+              </span>
+            </button>
+          </div>
+        } @else if (a.photos) {
+          <div class="sq-grid detail-grid">
+            @for (img of a.photos; track $index) {
+              <button
+                type="button"
+                class="sq-tile"
+                [attr.aria-label]="'Open photo ' + ($index + 1)"
+                (click)="openPhoto(img)"
+              >
+                <img [src]="img" [alt]="'Attached photo ' + ($index + 1)" />
+              </button>
+            }
+          </div>
+        }
+      }
+
+      <!-- 4. LOCATION (Only shown if location exists) -->
+      @if (a.locationName) {
+        <p class="label">Location</p>
+        <div class="loc">
+          <app-map-placeholder [label]="a.locationName"></app-map-placeholder>
+          <p class="loc-name">{{ a.locationName }}</p>
+          @if (a.locationAddress) {
+            <p class="loc-addr">{{ a.locationAddress }}</p>
+          }
+          <button
+            type="button"
+            class="btn btn-ghost view"
+            (click)="viewLocation(a.locationName, a.locationAddress ?? '')"
+          >
+            <ion-icon name="location-outline"></ion-icon> View Location
+          </button>
+        </div>
+      }
+
+      <!-- 5. REMINDER (Only shown if reminder is enabled) -->
+      @if (a.reminder) {
+        <p class="label">Reminder</p>
+        <div class="rows">
+          <div class="row">
+            <ion-icon name="notifications-outline"></ion-icon>
+            <span>Interval</span>
+            <strong>{{ formatReminder(a) }}</strong>
+          </div>
+          <div class="row">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>Reference</span>
+            <strong>{{ a.reminderRef === 'deadline' ? 'Deadline' : 'Scheduled Time' }}</strong>
+          </div>
+        </div>
+      }
+
+      <p class="label">Update status</p>
+      <div class="chips">
+        @for (s of statuses; track s) {
+          <button type="button" class="chip" [class.active]="a.status === s" (click)="setStatus(s)">{{ s }}</button>
+        }
+      </div>
+    </div>
+  }
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="actions">
+    <button type="button" class="btn btn-danger" (click)="delete()">Delete</button>
+    <button type="button" class="btn btn-primary" (click)="edit()">Edit</button>
+  </div>
+</ion-footer>

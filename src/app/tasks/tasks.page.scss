@@ -1,0 +1,103 @@
+.tasks-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--app-space-3);
+}
+
+.cat-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: var(--app-radius-pill);
+  border: 1.5px solid #d5e4fa;
+  background: var(--app-light-blue);
+  color: var(--app-primary);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+
+  ion-icon {
+    font-size: 16px;
+  }
+  &.active {
+    background: var(--app-primary);
+    border-color: var(--app-primary);
+    color: #fff;
+  }
+}
+
+.active-cat-bar {
+  display: flex;
+  align-items: center;
+  margin-top: -6px;
+}
+
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 6px 12px;
+  border-radius: var(--app-radius-pill);
+  background: var(--app-light-blue);
+  border: 1px solid var(--app-secondary);
+  color: var(--app-primary);
+  font-size: 12px;
+  font-weight: 500;
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+.cat-chip-clear {
+  border: 0;
+  background: transparent;
+  color: var(--app-primary);
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+}
+
+.filters {
+  display: flex;
+  gap: var(--app-space-2);
+  overflow-x: auto;
+  margin: 0 calc(var(--app-space-5) * -1);
+  padding: 0 var(--app-space-5);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.filter {
+  flex: none;
+  border: 0;
+  border-radius: var(--app-radius-pill);
+  padding: 10px 16px;
+  background: var(--app-card);
+  color: var(--app-text-muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+  box-shadow: var(--app-shadow);
+  transition: all 0.2s ease;
+
+  &.active {
+    background: var(--app-primary);
+    color: #fff;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-space-3);
+}

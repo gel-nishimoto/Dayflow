@@ -1,27 +1,126 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+ion-content {
+  --background: var(--app-bg);
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.page {
+  padding: var(--app-space-4) var(--app-space-5) 96px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-space-5);
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-#container a {
-  text-decoration: none;
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-2);
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--app-primary);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+
+.app-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.bell {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--app-card);
+  box-shadow: var(--app-shadow);
+  color: var(--app-text);
+  font-size: 22px;
+  display: grid;
+  place-items: center;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.94);
+  }
+
+  .dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--app-primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--app-bg);
+  }
+}
+
+.welcome {
+  .date {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: var(--app-text-muted);
+  }
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--app-text);
+  }
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--app-space-3);
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--app-text);
+  }
+}
+
+.see-all {
+  background: var(--app-light-blue);
+  color: var(--app-primary);
+  border: 0;
+  border-radius: var(--app-radius-pill);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-space-3);
+}
+
+ion-fab-button {
+  --background: var(--app-primary);
+  --box-shadow: 0 8px 20px rgba(57, 121, 216, 0.35);
+  margin-bottom: 8px;
 }

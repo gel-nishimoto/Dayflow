@@ -1,0 +1,53 @@
+.card {
+  background: linear-gradient(135deg, var(--app-primary), var(--app-secondary));
+  color: #fff;
+  border-radius: 24px;
+  padding: var(--app-space-5);
+  box-shadow: 0 8px 20px rgba(57, 121, 216, 0.25);
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--app-space-3);
+}
+
+.label {
+  margin: 0 0 4px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.percent {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.bar {
+  margin-top: var(--app-space-4);
+  height: 8px;
+  border-radius: var(--app-radius-pill);
+  background: rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #fff;
+  transition: width 0.4s ease;
+}
+
+.hint {
+  margin: var(--app-space-3) 0 0;
+  font-size: 13px;
+  opacity: 0.9;
+}
+

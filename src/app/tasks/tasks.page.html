@@ -1,0 +1,63 @@
+<ion-content [fullscreen]="true">
+  <div class="screen">
+    <div class="tasks-head">
+      <h1 class="screen-title">My Tasks</h1>
+      <button
+        type="button"
+        class="cat-filter-btn"
+        [class.active]="selectedCategory() !== 'all'"
+        (click)="openCategoryFilter()"
+      >
+        <ion-icon name="funnel-outline"></ion-icon>
+        <span>Category</span>
+      </button>
+    </div>
+
+    <div class="filters" role="tablist">
+      @for (f of filters; track f) {
+        <button type="button" class="filter" [class.active]="active() === f" (click)="active.set(f)">{{ f }}</button>
+      }
+    </div>
+
+    @if (selectedCategory() !== 'all') {
+      <div class="active-cat-bar">
+        <span class="cat-chip">
+          <span>Category: <strong>{{ selectedCategory() }}</strong></span>
+          <button
+            type="button"
+            class="cat-chip-clear"
+            aria-label="Clear category filter"
+            (click)="clearCategoryFilter($event)"
+          >
+            <ion-icon name="close-circle"></ion-icon>
+          </button>
+        </span>
+      </div>
+    }
+
+    <div class="list">
+      @for (task of items(); track task.id) {
+        <app-task-item
+          [task]="task"
+          [showDate]="true"
+          (toggle)="actions.toggle($event)"
+          (openTask)="actions.openDetail($event)"
+        ></app-task-item>
+      } @empty {
+        <div class="empty">
+          <ion-icon name="clipboard-outline"></ion-icon>
+          <p>
+            No {{ active() === 'all' ? '' : active() }}
+            {{ selectedCategory() === 'all' ? '' : selectedCategory() }} tasks found.
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button aria-label="Add task" (click)="actions.openForm()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

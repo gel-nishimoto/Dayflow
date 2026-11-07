@@ -1,0 +1,125 @@
+ion-content {
+  --background: var(--app-card);
+}
+
+.sheet {
+  padding: calc(var(--app-space-4) + env(safe-area-inset-top)) var(--app-space-5) var(--app-space-5);
+}
+
+.close {
+  margin-left: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--app-bg);
+  color: var(--app-text);
+  font-size: 22px;
+  display: grid;
+  place-items: center;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-2);
+}
+
+.cat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--app-radius-pill);
+  background: var(--app-bg);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--app-text);
+}
+
+h2 {
+  margin: var(--app-space-3) 0 var(--app-space-2);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.desc {
+  margin: 0 0 var(--app-space-4);
+  color: var(--app-text-muted);
+  font-size: 14px;
+}
+
+.rows {
+  margin: 0 0 var(--app-space-4);
+  background: var(--app-bg);
+  border-radius: var(--app-radius-sm);
+  padding: var(--app-space-2) var(--app-space-4);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-3);
+  padding: 10px 0;
+  font-size: 14px;
+  color: var(--app-text-muted);
+
+  ion-icon {
+    font-size: 18px;
+    color: var(--app-primary);
+  }
+  span {
+    flex: 1;
+  }
+  strong {
+    color: var(--app-text);
+    font-weight: 600;
+  }
+  & + .row {
+    border-top: 1px solid #e9eef6;
+  }
+}
+
+.label {
+  margin: var(--app-space-3) 0 var(--app-space-2);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--app-text);
+}
+
+.detail-grid {
+  margin-bottom: var(--app-space-4);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  border: 1.5px solid #e3e9f3;
+  background: var(--app-card);
+  color: var(--app-text-muted);
+  border-radius: var(--app-radius-pill);
+  padding: 8px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &.active {
+    background: var(--app-light-blue);
+    border-color: var(--app-primary);
+    color: var(--app-primary);
+  }
+}
+
+.actions {
+  display: flex;
+  gap: var(--app-space-3);
+  padding: var(--app-space-3) var(--app-space-5);
+  padding-bottom: calc(var(--app-space-3) + env(safe-area-inset-bottom));
+  background: var(--app-card);
+}

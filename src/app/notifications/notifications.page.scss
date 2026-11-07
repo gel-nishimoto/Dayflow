@@ -1,0 +1,124 @@
+.screen {
+  padding-bottom: var(--app-space-6);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-2);
+
+  .screen-title {
+    flex: 1;
+    font-size: 22px;
+  }
+}
+
+.back {
+  --color: var(--app-text);
+  --background: var(--app-card);
+  --border-radius: 50%;
+  --padding-start: 0;
+  --padding-end: 0;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  margin: 0;
+  border-radius: 50%;
+  background: var(--app-card);
+  box-shadow: var(--app-shadow);
+}
+
+.mark {
+  background: var(--app-light-blue);
+  color: var(--app-primary);
+  border: 0;
+  border-radius: var(--app-radius-pill);
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-space-3);
+}
+
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--app-space-3);
+  width: 100%;
+  padding: var(--app-space-4);
+  background: var(--app-card);
+  border: 0;
+  border-radius: var(--app-radius);
+  box-shadow: var(--app-shadow);
+  font-family: inherit;
+  text-align: left;
+  transition: opacity 0.2s ease;
+
+  &:not(.unread) {
+    opacity: 0.7;
+  }
+}
+
+.icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  background: var(--app-light-blue);
+  color: var(--app-primary);
+
+  &.deadline {
+    background: var(--app-amber);
+    color: var(--app-amber-text);
+  }
+  &.overdue {
+    background: var(--app-red);
+    color: var(--app-red-text);
+  }
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  .title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--app-text);
+  }
+  .desc {
+    font-size: 13px;
+    color: var(--app-text-muted);
+  }
+  .time {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--app-secondary);
+    font-weight: 600;
+  }
+}
+
+.unread-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--app-primary);
+}
+

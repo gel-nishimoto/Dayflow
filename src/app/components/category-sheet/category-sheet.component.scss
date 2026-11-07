@@ -1,0 +1,35 @@
+ion-toolbar {
+  --background: var(--app-bg);
+  --color: var(--app-text);
+  font-weight: 700;
+}
+
+ion-content,
+ion-footer {
+  --background: var(--app-bg);
+  background: var(--app-bg);
+}
+
+.cat-close {
+  margin-right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--app-card);
+  color: var(--app-text);
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+}
+
+.cat-sheet {
+  padding: 8px 20px 28px;
+}
+
+.cat-footer {
+  display: flex;
+  gap: 12px;
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+}
+

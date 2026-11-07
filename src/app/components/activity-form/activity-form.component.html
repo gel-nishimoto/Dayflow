@@ -1,0 +1,383 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>{{ isEdit ? 'Edit Activity' : 'New Activity' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form class="form" (ngSubmit)="save()" novalidate>
+    <!-- A. BASIC INFORMATION -->
+    <div class="field">
+      <label for="title">Activity Title <span class="req">*</span></label>
+      <input
+        id="title"
+        class="input"
+        [class.invalid]="titleError"
+        type="text"
+        name="title"
+        placeholder="e.g. Complete Mathematics Assignment"
+        [(ngModel)]="form.title"
+      />
+      @if (titleError) {
+        <p class="error">Please enter an activity title.</p>
+      }
+    </div>
+
+    <div class="field">
+      <label for="description">Description <span class="opt">(Optional)</span></label>
+      <textarea
+        id="description"
+        class="input"
+        name="description"
+        rows="3"
+        placeholder="Add lecture notes, instructions, or chapters..."
+        [(ngModel)]="form.description"
+      ></textarea>
+    </div>
+
+    <!-- C & 2. ATTACHMENT PREVIEWS & CAPSULE ACTION PILLS (Directly below Description) -->
+    @if (hasAttachments) {
+      <div class="media-block">
+        <div class="media-head">
+          <span class="media-title">Attachments</span>
+          <span class="media-cap">{{ attachmentCapacityText }}</span>
+        </div>
+
+        @if (form.video; as vid) {
+          <div class="sq-grid">
+            <div class="sq-tile video-tile" role="button" tabindex="0" (click)="previewVideo()">
+              <img [src]="vid.thumb" [alt]="vid.title" />
+              <span class="play-ov"><ion-icon name="play-circle"></ion-icon></span>
+              <span class="vid-tag">
+                <ion-icon name="videocam-outline"></ion-icon> {{ vid.duration }}
+              </span>
+              <button
+                type="button"
+                class="sq-remove"
+                aria-label="Remove video"
+                (click)="removeVideo($event)"
+              >
+                <ion-icon name="close-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+        } @else {
+          <div class="sq-grid">
+            @for (img of form.photos; track $index) {
+              <div class="sq-tile" role="button" tabindex="0" (click)="previewPhotoAt($index)">
+                <img [src]="img" [alt]="'Attached photo ' + ($index + 1)" />
+                <button
+                  type="button"
+                  class="sq-remove"
+                  [attr.aria-label]="'Remove photo ' + ($index + 1)"
+                  (click)="removePhotoAt($index, $event)"
+                >
+                  <ion-icon name="close-outline"></ion-icon>
+                </button>
+              </div>
+            }
+            @if (form.photos.length < 5) {
+              <button
+                type="button"
+                class="sq-tile sq-add"
+                aria-label="Add another photo"
+                (click)="openPhotoAttachment()"
+              >
+                <ion-icon name="add-outline"></ion-icon>
+                <span>Add Photo</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Clickable Capsule/Pill Buttons for Photo & Location -->
+    <div class="capsule-row">
+      <button
+        type="button"
+        class="action-pill"
+        [class.filled]="hasAttachments"
+        (click)="openPhotoAttachment()"
+      >
+        <ion-icon name="camera-outline"></ion-icon>
+        <span>Add Photo</span>
+      </button>
+
+      <button
+        type="button"
+        class="action-pill"
+        [class.filled]="hasLocation"
+        (click)="openLocation()"
+      >
+        <ion-icon name="location-outline"></ion-icon>
+        <span>{{ hasLocation ? 'Change Location' : 'Add Location' }}</span>
+      </button>
+    </div>
+
+    @if (hasLocation) {
+      <div class="loc-card">
+        <app-map-placeholder [label]="form.locationName ?? ''"></app-map-placeholder>
+        <div class="loc-info">
+          <p class="place-name">{{ form.locationName }}</p>
+          <p class="hint">{{ form.locationAddress }}</p>
+        </div>
+        <div class="mini-actions">
+          <button type="button" class="mini" (click)="openLocation()">Change Location</button>
+          <button type="button" class="mini danger" (click)="removeLocation()">Remove Location</button>
+        </div>
+      </div>
+    }
+
+    <!-- B. SCHEDULE -->
+    <div class="section-box">
+      <p class="sec-heading">Schedule</p>
+
+      <div class="field">
+        <label for="date">Schedule Date <span class="req">*</span></label>
+        <div class="date-shortcuts">
+          <button
+            type="button"
+            class="sc-pill"
+            [class.active]="activeDateShortcut === 'today'"
+            (click)="setDateShortcut('today')"
+          >
+            Today
+          </button>
+          <button
+            type="button"
+            class="sc-pill"
+            [class.active]="activeDateShortcut === 'tomorrow'"
+            (click)="setDateShortcut('tomorrow')"
+          >
+            Tomorrow
+          </button>
+          <button
+            type="button"
+            class="sc-pill"
+            [class.active]="activeDateShortcut === 'week'"
+            (click)="setDateShortcut('week')"
+          >
+            This Week
+          </button>
+          <button
+            type="button"
+            class="sc-pill"
+            [class.active]="activeDateShortcut === 'custom'"
+            (click)="setDateShortcut('custom', dateInputRef)"
+          >
+            Custom Date
+          </button>
+        </div>
+        <input
+          #dateInputRef
+          id="date"
+          class="input"
+          type="date"
+          name="date"
+          [(ngModel)]="form.date"
+          (ngModelChange)="onScheduleChange()"
+        />
+      </div>
+
+      <div class="two-col">
+        <div class="field">
+          <div class="lbl-row">
+            <label for="time">Time <span class="opt">(Optional)</span></label>
+            @if (form.time) {
+              <button type="button" class="clear-link" (click)="clearTime()">Clear</button>
+            }
+          </div>
+          <input
+            id="time"
+            class="input"
+            type="time"
+            name="time"
+            [(ngModel)]="form.time"
+            (ngModelChange)="onScheduleChange()"
+          />
+        </div>
+
+        <div class="field">
+          <div class="lbl-row">
+            <label for="deadline">Deadline <span class="opt">(Optional)</span></label>
+            @if (form.deadline) {
+              <button type="button" class="clear-link" (click)="clearDeadline()">Clear</button>
+            }
+          </div>
+          <input
+            id="deadline"
+            class="input"
+            [class.invalid]="deadlineError"
+            type="date"
+            name="deadline"
+            [(ngModel)]="form.deadline"
+            (ngModelChange)="onScheduleChange()"
+          />
+        </div>
+      </div>
+      @if (deadlineError) {
+        <p class="error">Deadline can't be earlier than the schedule date.</p>
+      }
+    </div>
+
+    <!-- 3. CATEGORY SELECTION -->
+    <div class="field">
+      <div class="lbl-row">
+        <span class="label">Category</span>
+        <button type="button" class="clear-link" (click)="openCategoryModal()">Manage Categories</button>
+      </div>
+
+      <button type="button" class="cat-selector" (click)="openCategoryModal()">
+        <span class="cat-badge-ic" [style.color]="selectedCategoryItem.color">
+          <ion-icon [name]="selectedCategoryItem.icon"></ion-icon>
+        </span>
+        <span class="cat-sel-text">
+          <span class="cat-sel-name">{{ selectedCategoryItem.name }}</span>
+          <span class="cat-sel-group">{{ selectedCategoryItem.group }}</span>
+        </span>
+        <ion-icon name="chevron-forward-outline" class="chev"></ion-icon>
+      </button>
+
+      <div class="chips">
+        @for (c of quickCategoryNames; track c) {
+          <button
+            type="button"
+            class="chip"
+            [class.active]="form.category === c"
+            (click)="selectQuickCategory(c)"
+          >
+            {{ c }}
+          </button>
+        }
+        <button
+          type="button"
+          class="chip more-chip"
+          [class.active]="!quickCategoryNames.includes(form.category)"
+          (click)="openCategoryModal()"
+        >
+          Others...
+        </button>
+      </div>
+    </div>
+
+    @if (isEdit) {
+      <div class="field">
+        <span class="label">Status</span>
+        <div class="chips">
+          @for (s of statuses; track s) {
+            <button type="button" class="chip cap" [class.active]="form.status === s" (click)="form.status = s">
+              {{ s }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- 5. REMINDER ENHANCEMENTS -->
+    <div class="reminder-card">
+      <div class="reminder-top">
+        <div>
+          <p class="reminder-title">Reminder</p>
+          <p class="reminder-sub">
+            @if (form.reminder && canConfigureReminder) {
+              {{ reminderSummaryText }}
+            } @else {
+              Get notified before your activity or deadline
+            }
+          </p>
+        </div>
+        <ion-toggle name="reminder" aria-label="Reminder" [(ngModel)]="form.reminder"></ion-toggle>
+      </div>
+
+      @if (form.reminder) {
+        <div class="reminder-body">
+          @if (!canConfigureReminder) {
+            <div class="rem-notice">
+              <ion-icon name="information-circle-outline"></ion-icon>
+              <span>Please provide a schedule time or a deadline above to configure a reminder.</span>
+            </div>
+          } @else {
+            <div class="rem-group">
+              <span class="rem-label">Based on</span>
+              <div class="ref-pills">
+                @if (canRemindByTime) {
+                  <button
+                    type="button"
+                    class="sc-pill"
+                    [class.active]="form.reminderRef === 'time'"
+                    (click)="form.reminderRef = 'time'"
+                  >
+                    Scheduled Time
+                  </button>
+                }
+                @if (canRemindByDeadline) {
+                  <button
+                    type="button"
+                    class="sc-pill"
+                    [class.active]="form.reminderRef === 'deadline'"
+                    (click)="form.reminderRef = 'deadline'"
+                  >
+                    Deadline
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="rem-group">
+              <span class="rem-label">Remind me</span>
+              <div class="chips">
+                @for (p of reminderPresets; track p.minutes) {
+                  <button
+                    type="button"
+                    class="chip"
+                    [class.active]="!customReminderMode && form.reminderMinutes === p.minutes"
+                    (click)="selectPresetMinutes(p.minutes)"
+                  >
+                    {{ p.label }}
+                  </button>
+                }
+                <button
+                  type="button"
+                  class="chip"
+                  [class.active]="customReminderMode"
+                  (click)="enableCustomReminder()"
+                >
+                  Custom
+                </button>
+              </div>
+            </div>
+
+            @if (customReminderMode) {
+              <div class="custom-rem-row">
+                <label for="customMin">Custom minutes before:</label>
+                <input
+                  id="customMin"
+                  class="input min-input"
+                  type="number"
+                  min="1"
+                  max="10080"
+                  name="customMinutes"
+                  [ngModel]="customMinutesInput"
+                  (ngModelChange)="onCustomMinutesChange($event)"
+                />
+              </div>
+            }
+
+            <p class="rem-selected-banner">
+              <ion-icon name="notifications-outline"></ion-icon>
+              <span>{{ reminderSummaryText }}</span>
+            </p>
+          }
+        </div>
+      }
+    </div>
+  </form>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="actions">
+    <button type="button" class="btn btn-ghost" (click)="cancel()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="save()">Save</button>
+  </div>
+</ion-footer>

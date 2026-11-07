@@ -1,0 +1,28 @@
+<ion-content [fullscreen]="true">
+  <div class="screen">
+    <header class="bar">
+      <ion-back-button class="back" defaultHref="/home" text="" icon="chevron-back-outline"></ion-back-button>
+      <h1 class="screen-title">Notifications</h1>
+      <button type="button" class="mark" [disabled]="store.unreadCount() === 0" (click)="markAllRead()">
+        Mark all read
+      </button>
+    </header>
+
+    <div class="list">
+      @for (n of store.notifications(); track n.id) {
+        <button type="button" class="item" [class.unread]="!n.read" (click)="store.markRead(n.id)">
+          <span class="icon" [class]="n.type"><ion-icon [name]="icons[n.type]"></ion-icon></span>
+          <span class="body">
+            <span class="title">{{ n.title }}</span>
+            <span class="desc">{{ n.description }}</span>
+            <span class="time">{{ n.time }}</span>
+          </span>
+          @if (!n.read) {
+            <span class="unread-dot"></span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+</ion-content>
+

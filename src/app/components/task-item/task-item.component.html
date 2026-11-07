@@ -1,0 +1,36 @@
+<div class="task" [class.done]="task().status === 'completed'">
+  <button
+    class="check"
+    type="button"
+    [attr.aria-label]="'Toggle completed: ' + task().title"
+    (click)="toggle.emit(task())"
+  >
+    <ion-icon name="checkmark"></ion-icon>
+  </button>
+
+  <button class="info" type="button" (click)="openTask.emit(task())">
+    <span class="title">{{ task().title }}</span>
+    @if (showDate()) {
+      <span class="meta">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>
+          {{ task().date | dateLabel }}{{ task().time ? ', ' + (task().time | time12) : '' }}
+        </span>
+      </span>
+      <span class="meta">
+        <span>
+          {{ task().category }}{{ task().deadline ? ' · Due ' + (task().deadline | dateLabel) : '' }}
+        </span>
+      </span>
+    } @else {
+      <span class="meta">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>
+          {{ task().time ? (task().time | time12) + ' · ' : '' }}{{ task().category }}
+        </span>
+      </span>
+    }
+  </button>
+
+  <span class="badge" [class]="task().status">{{ task().status }}</span>
+</div>

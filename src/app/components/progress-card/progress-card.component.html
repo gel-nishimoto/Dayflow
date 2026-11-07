@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="top">
+    <div>
+      <p class="label">Today's progress</p>
+      <h2>{{ done() }} of {{ total() }} tasks done</h2>
+    </div>
+    <span class="percent">{{ percent() }}%</span>
+  </div>
+  <div class="bar"><div class="fill" [style.width.%]="percent()"></div></div>
+  <p class="hint">
+    @if (percent() === 100) { All done. Great job! } @else { Keep going, you're doing well. }
+  </p>
+</div>
+

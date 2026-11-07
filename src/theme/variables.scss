@@ -1,2 +1,38 @@
-// For information on how to create your own theme, please refer to:
-// https://ionicframework.com/docs/theming/
+// App theme: blue and white. Tokens are CSS variables so every component shares them.
+:root {
+  --app-primary: #3979d8;
+  --app-secondary: #6d9eeb;
+  --app-light-blue: #eaf2ff;
+  --app-bg: #f7f9fc;
+  --app-card: #ffffff;
+  --app-text: #26354a;
+  --app-text-muted: #8995a7;
+  --app-green: #e8f5ec;
+  --app-green-text: #2f8f55;
+  --app-amber: #fff4e0;
+  --app-amber-text: #b7791f;
+  --app-red: #fdecec;
+  --app-red-text: #d64545;
+
+  --app-radius: 20px;
+  --app-radius-sm: 12px;
+  --app-radius-pill: 999px;
+  --app-shadow: 0 4px 16px rgba(38, 53, 74, 0.06);
+  --app-space-1: 4px;
+  --app-space-2: 8px;
+  --app-space-3: 12px;
+  --app-space-4: 16px;
+  --app-space-5: 20px;
+  --app-space-6: 24px;
+
+  --ion-color-primary: #3979d8;
+  --ion-color-primary-rgb: 57, 121, 216;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #326ac0;
+  --ion-color-primary-tint: #4d86de;
+
+  --ion-background-color: #f7f9fc;
+  --ion-text-color: #26354a;
+  --ion-font-family: 'Inter', -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
