@@ -43,10 +43,10 @@
       </div>
 
       <!-- 3. ATTACHMENTS (Only shown if photos or video exist) -->
-      @if ((a.photos && a.photos.length > 0) || a.video) {
+      @if ((a.photos && a.photos.length > 0) || (a.videos && a.videos.length > 0) || a.video) {
         <p class="label">Attachments</p>
-        @if (a.video; as vid) {
-          <div class="sq-grid detail-grid">
+        <div class="sq-grid detail-grid">
+          @for (vid of (a.videos || (a.video ? [a.video] : [])); track $index) {
             <button
               type="button"
               class="sq-tile video-tile"
@@ -59,21 +59,18 @@
                 <ion-icon name="videocam-outline"></ion-icon> {{ vid.duration }}
               </span>
             </button>
-          </div>
-        } @else if (a.photos) {
-          <div class="sq-grid detail-grid">
-            @for (img of a.photos; track $index) {
-              <button
-                type="button"
-                class="sq-tile"
-                [attr.aria-label]="'Open photo ' + ($index + 1)"
-                (click)="openPhoto(img)"
-              >
-                <img [src]="img" [alt]="'Attached photo ' + ($index + 1)" />
-              </button>
-            }
-          </div>
-        }
+          }
+          @for (img of (a.photos || []); track $index) {
+            <button
+              type="button"
+              class="sq-tile"
+              [attr.aria-label]="'Open photo ' + ($index + 1)"
+              (click)="openPhoto(img)"
+            >
+              <img [src]="img" [alt]="'Attached photo ' + ($index + 1)" />
+            </button>
+          }
+        </div>
       }
 
       <!-- 4. LOCATION (Only shown if location exists) -->
@@ -88,7 +85,7 @@
           <button
             type="button"
             class="btn btn-ghost view"
-            (click)="viewLocation(a.locationName, a.locationAddress ?? '')"
+            (click)="viewLocation(a.locationName, a.locationAddress ?? '', a.latitude, a.longitude)"
           >
             <ion-icon name="location-outline"></ion-icon> View Location
           </button>

@@ -10,78 +10,44 @@
       </button>
     </div>
 
-    @if (mode() === 'menu') {
-      <div class="options">
-        <button type="button" class="opt-btn" [disabled]="!canAddPhoto" (click)="openViewfinder()">
-          <span class="opt-icon"><ion-icon name="camera-outline"></ion-icon></span>
+    <div class="options">
+      <!-- 1. Take Photo -->
+      <button type="button" class="opt-btn" [disabled]="!canAddPhoto || loading()" (click)="takePhoto()">
+        <span class="opt-icon"><ion-icon name="camera-outline"></ion-icon></span>
+        <span class="opt-text">
+          <span class="opt-title">Take Photo</span>
+          <span class="opt-sub">Open camera to capture a photo</span>
+        </span>
+      </button>
+
+      <!-- 2. Choose From Gallery -->
+      <button type="button" class="opt-btn" [disabled]="!canAddPhoto || loading()" (click)="chooseFromGallery()">
+        <span class="opt-icon"><ion-icon name="images-outline"></ion-icon></span>
+        <span class="opt-text">
+          <span class="opt-title">Choose From Gallery</span>
+          <span class="opt-sub">Choose photos from your gallery ({{ 5 - currentAttachmentCount }} left)</span>
+        </span>
+      </button>
+
+      <!-- 3. Record Video -->
+      @if (replaceIndex === undefined) {
+        <button type="button" class="opt-btn" [disabled]="!canAddVideo || loading()" (click)="recordVideo()">
+          <span class="opt-icon video"><ion-icon name="videocam-outline"></ion-icon></span>
           <span class="opt-text">
-            <span class="opt-title">Take Photo</span>
-            <span class="opt-sub">Open simulated camera viewfinder</span>
+            <span class="opt-title">Record Video</span>
+            <span class="opt-sub">Record a video clip using device camera</span>
           </span>
         </button>
+      }
+    </div>
 
-        <button type="button" class="opt-btn" [disabled]="!canAddPhoto" (click)="pickSamplePhoto()">
-          <span class="opt-icon"><ion-icon name="images-outline"></ion-icon></span>
-          <span class="opt-text">
-            <span class="opt-title">Choose Sample Photo</span>
-            <span class="opt-sub">Add a sample study reference image ({{ 5 - photoCount }} left)</span>
-          </span>
-        </button>
+    <div class="rule-banner">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <span>You can select or record up to 5 attachments overall (photos or videos).</span>
+    </div>
 
-        @if (replaceIndex === undefined) {
-          <button type="button" class="opt-btn" [disabled]="!canAddVideo" (click)="pickSampleVideo()">
-            <span class="opt-icon video"><ion-icon name="videocam-outline"></ion-icon></span>
-            <span class="opt-text">
-              <span class="opt-title">Attach Sample Video</span>
-              <span class="opt-sub">
-                @if (photoCount > 0) {
-                  Remove attached photos first to attach a video
-                } @else if (hasVideo) {
-                  Only 1 video allowed per activity
-                } @else {
-                  Attach 1 short video clip instead of photos
-                }
-              </span>
-            </span>
-          </button>
-        }
-      </div>
-
-      <div class="rule-banner">
-        <ion-icon name="information-circle-outline"></ion-icon>
-        <span>You can attach up to 5 photos or 1 video per activity (cannot be mixed).</span>
-      </div>
-
-      <div class="actions">
-        <button type="button" class="btn btn-ghost" (click)="cancel()">Cancel</button>
-      </div>
-    } @else {
-      <div class="viewfinder" [class.has-photo]="captured()">
-        @if (captured(); as img) {
-          <img [src]="img" alt="Sample captured photo" />
-        } @else {
-          <ion-icon name="camera-outline"></ion-icon>
-          <p>Camera preview (demo only)</p>
-        }
-      </div>
-
-      <p class="note">
-        @if (captured()) {
-          Looks good? Use this sample photo or retake it.
-        } @else {
-          Simulated student reference camera. Tap Capture to snap a sample image.
-        }
-      </p>
-
-      <div class="actions">
-        <button type="button" class="btn btn-ghost" (click)="mode.set('menu')">Back</button>
-        @if (captured()) {
-          <button type="button" class="btn btn-ghost" (click)="retake()">Retake</button>
-          <button type="button" class="btn btn-primary" (click)="useCapturedPhoto()">Use Photo</button>
-        } @else {
-          <button type="button" class="btn btn-primary" (click)="capture()">Capture</button>
-        }
-      </div>
-    }
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" (click)="cancel()">Cancel</button>
+    </div>
   </div>
 </ion-content>

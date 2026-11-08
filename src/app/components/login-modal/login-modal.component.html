@@ -1,0 +1,149 @@
+<ion-content [fullscreen]="true">
+  <div class="login-sheet">
+    <header class="sheet-header">
+      <div class="header-titles">
+        <h2 class="title">{{ mode() === 'login' ? 'Sign In' : 'Create Account' }}</h2>
+        <p class="subtitle">
+          {{ mode() === 'login' ? 'Connect to sync your activities with the database' : 'Register to start saving your schedule' }}
+        </p>
+      </div>
+      <button type="button" class="close-btn" (click)="cancel()" aria-label="Close">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </header>
+
+    <!-- Mode Selector Pills -->
+    <div class="mode-tabs">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="mode() === 'login'"
+        (click)="setMode('login')"
+      >
+        <ion-icon name="log-in-outline"></ion-icon>
+        <span>Log In</span>
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="mode() === 'register'"
+        (click)="setMode('register')"
+      >
+        <ion-icon name="person-add-outline"></ion-icon>
+        <span>Sign Up</span>
+      </button>
+    </div>
+
+    <!-- Quick Demo Account Shortcut -->
+    @if (mode() === 'login') {
+      <button type="button" class="demo-pill" (click)="fillDemoAccount()">
+        <ion-icon name="sparkles-outline"></ion-icon>
+        <span class="demo-text">
+          <span class="demo-title">Quick Demo Login</span>
+          <span class="demo-cred">student@dayflow.app &bull; password123</span>
+        </span>
+        <span class="demo-action">Use</span>
+      </button>
+    }
+
+    <!-- Form -->
+    <form class="login-form" (ngSubmit)="submit()">
+      @if (mode() === 'register') {
+        <div class="form-field">
+          <label for="register-name">Full Name</label>
+          <div class="input-box">
+            <ion-icon name="person-outline"></ion-icon>
+            <input
+              id="register-name"
+              type="text"
+              name="name"
+              placeholder="e.g. Maria Santos"
+              [(ngModel)]="name"
+            />
+          </div>
+        </div>
+      }
+
+      <div class="form-field">
+        <label for="login-email">Email Address</label>
+        <div class="input-box">
+          <ion-icon name="mail-outline"></ion-icon>
+          <input
+            id="login-email"
+            type="email"
+            name="email"
+            placeholder="e.g. user@example.com"
+            [(ngModel)]="email"
+            autocomplete="email"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label for="login-password">Password</label>
+        <div class="input-box">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <input
+            id="login-password"
+            [type]="showPassword() ? 'text' : 'password'"
+            name="password"
+            placeholder="Enter your password"
+            [(ngModel)]="password"
+            autocomplete="current-password"
+            required
+          />
+          <button
+            type="button"
+            class="eye-btn"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+          >
+            <ion-icon [name]="showPassword() ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      @if (mode() === 'register') {
+        <div class="form-field">
+          <label for="register-school">School / University</label>
+          <div class="input-box">
+            <ion-icon name="school-outline"></ion-icon>
+            <input
+              id="register-school"
+              type="text"
+              name="school"
+              placeholder="e.g. University of the Philippines"
+              [(ngModel)]="school"
+            />
+          </div>
+        </div>
+      }
+
+      @if (errorMessage()) {
+        <div class="error-banner">
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <button type="submit" class="submit-btn" [disabled]="submitting()">
+        @if (submitting()) {
+          <ion-spinner name="crescent"></ion-spinner>
+          <span>{{ mode() === 'login' ? 'Signing In...' : 'Creating Account...' }}</span>
+        } @else {
+          <ion-icon [name]="mode() === 'login' ? 'log-in-outline' : 'person-add-outline'"></ion-icon>
+          <span>{{ mode() === 'login' ? 'Log In' : 'Create Account' }}</span>
+        }
+      </button>
+    </form>
+
+    <div class="guest-footer">
+      <p class="guest-text">
+        Prefer to test without an account? You can continue using Dayflow as a <strong>guest</strong> anytime. Guest data is saved in memory only.
+      </p>
+      <button type="button" class="dismiss-btn" (click)="cancel()">
+        Continue as Guest
+      </button>
+    </div>
+  </div>
+</ion-content>

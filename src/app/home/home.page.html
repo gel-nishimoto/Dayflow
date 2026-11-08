@@ -15,7 +15,7 @@
 
     <section class="welcome">
       <p class="date">{{ today | date: 'EEEE, MMMM d' }}</p>
-      <h1>{{ greeting }}, Angel!</h1>
+      <h1>{{ greeting }}, {{ userName() }}!</h1>
     </section>
 
     <app-progress-card [done]="doneCount()" [total]="todayTasks().length"></app-progress-card>

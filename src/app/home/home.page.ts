@@ -24,6 +24,7 @@ export class HomePage {
 
   today = new Date();
   greeting = this.getGreeting();
+  userName = this.store.userName;
 
   // Only today's tasks; the Home screen shows just the first four.
   todayTasks = computed(() =>
@@ -46,11 +47,11 @@ export class HomePage {
     return 'Good evening';
   }
 
-  seeAll() {
+  seeAll(): void {
     this.router.navigateByUrl('/tasks');
   }
 
-  openNotifications() {
+  openNotifications(): void {
     this.router.navigateByUrl('/notifications');
   }
 }

@@ -14,6 +14,7 @@
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
+@import "leaflet/dist/leaflet.css";
 
 /* Dark mode disabled: the app uses a fixed blue and white theme. */
 /* @import '@ionic/angular/css/palettes/dark.system.css'; */
@@ -99,6 +100,38 @@ ion-toast.app-toast {
   --color: #ffffff;
   --border-radius: 16px;
   font-weight: 500;
+}
+
+ion-toast.due-tomorrow-toast {
+  --background: #1e293b;
+  --color: #ffffff;
+  --border-radius: 16px;
+  --box-shadow: 0 12px 30px rgba(15, 23, 42, 0.45);
+  font-family: inherit;
+
+  &::part(header) {
+    font-size: 15px;
+    font-weight: 700;
+    color: #f59e0b;
+    margin-bottom: 2px;
+  }
+
+  &::part(message) {
+    font-size: 13.5px;
+    color: #e2e8f0;
+    line-height: 1.4;
+  }
+
+  &::part(button) {
+    font-size: 13px;
+    font-weight: 600;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border-radius: 10px;
+    padding: 6px 14px;
+    text-transform: none;
+    margin-inline-start: 8px;
+  }
 }
 
 .empty {
@@ -742,4 +775,516 @@ ion-toast.app-toast {
   ion-icon {
     font-size: 16px;
   }
+}
+
+/* Leaflet Custom Map Pin */
+.custom-map-pin {
+  background: transparent !important;
+  border: none !important;
+}
+
+.pin-marker-wrapper {
+  position: relative;
+  width: 36px;
+  height: 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  filter: drop-shadow(0 4px 6px rgba(28, 54, 96, 0.35));
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.pin-icon-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: var(--app-primary, #3979d8);
+  border: 2.5px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    transform: rotate(45deg);
+  }
+}
+
+.pin-pulse {
+  position: absolute;
+  bottom: -2px;
+  width: 14px;
+  height: 5px;
+  background: rgba(28, 54, 96, 0.3);
+  border-radius: 50%;
+}
+
+.permission-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 12.5px;
+  font-weight: 500;
+  border: 1px solid #fecaca;
+
+  ion-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+}
+
+.map-wrapper,
+.map-view {
+  touch-action: none;
+}
+
+/* ---------- Profile Editable Fields & Save Button ---------- */
+.input-row {
+  cursor: text;
+
+  .profile-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--app-text);
+    padding: 3px 0 0;
+    margin: 0;
+
+    &::placeholder {
+      font-weight: 400;
+      color: var(--app-text-muted);
+      opacity: 0.65;
+    }
+
+    &:focus {
+      color: var(--app-primary);
+    }
+  }
+}
+
+.save-row {
+  padding: var(--app-space-3) var(--app-space-4);
+  border-top: 1px solid #eef2f8;
+  background: #fbfcfe;
+
+  .save-btn {
+    width: 100%;
+    height: 44px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--app-primary);
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--app-space-2);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(57, 121, 216, 0.25);
+    transition: transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: #2f68bc;
+    }
+
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    ion-icon {
+      font-size: 18px;
+    }
+
+    ion-spinner {
+      width: 18px;
+      height: 18px;
+      --color: #ffffff;
+    }
+  }
+}
+
+/* ---------- Profile Guest Styling ---------- */
+.guest-avatar {
+  background: linear-gradient(135deg, #8995a7, #5a7d9a) !important;
+  box-shadow: 0 8px 20px rgba(90, 125, 154, 0.25) !important;
+}
+
+.guest-badge {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.guest-info-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f0f7ff;
+  border: 1px solid #d0e4ff;
+  color: #2b6cb0;
+  font-size: 13px;
+  font-weight: 500;
+  margin: var(--app-space-3) var(--app-space-4);
+
+  ion-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+}
+
+.login-btn {
+  height: 52px;
+  border-radius: 16px;
+  border: 0;
+  background: var(--app-primary);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--app-space-2);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(57, 121, 216, 0.3);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  &:active {
+    transform: scale(0.97);
+    background: #2f68bc;
+  }
+}
+
+/* ---------- Login / Auth Modal Sheet ---------- */
+.login-sheet {
+  padding: 24px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: #ffffff;
+  min-height: 100%;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+
+  .header-titles {
+    flex: 1;
+
+    .title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--app-text);
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      font-size: 13px;
+      color: var(--app-text-muted);
+    }
+  }
+
+  .close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: #f1f5f9;
+    color: var(--app-text-muted);
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    cursor: pointer;
+
+    &:active {
+      background: #e2e8f0;
+    }
+  }
+}
+
+.mode-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  padding: 4px;
+  background: #f1f5f9;
+  border-radius: 12px;
+
+  .tab-btn {
+    height: 38px;
+    border: none;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--app-text-muted);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+
+    ion-icon {
+      font-size: 16px;
+    }
+
+    &.active {
+      background: #ffffff;
+      color: var(--app-primary);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+  }
+}
+
+.demo-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f0fdf4;
+  border: 1px dashed #86efac;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:active {
+    background: #dcfce7;
+  }
+
+  ion-icon {
+    font-size: 18px;
+    color: #16a34a;
+    flex-shrink: 0;
+  }
+
+  .demo-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .demo-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #166534;
+    }
+    .demo-cred {
+      font-size: 11.5px;
+      color: #15803d;
+    }
+  }
+
+  .demo-action {
+    font-size: 12px;
+    font-weight: 700;
+    color: #16a34a;
+    padding: 3px 8px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--app-text);
+  }
+
+  .input-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 48px;
+    padding: 0 14px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &:focus-within {
+      background: #ffffff;
+      border-color: var(--app-primary);
+      box-shadow: 0 0 0 3px rgba(57, 121, 216, 0.12);
+    }
+
+    ion-icon {
+      font-size: 18px;
+      color: var(--app-text-muted);
+      flex-shrink: 0;
+    }
+
+    input {
+      flex: 1;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--app-text);
+
+      &::placeholder {
+        color: #94a3b8;
+      }
+    }
+
+    .eye-btn {
+      border: none;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      color: var(--app-text-muted);
+
+      &:hover {
+        color: var(--app-text);
+      }
+    }
+  }
+}
+
+.error-banner {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.submit-btn {
+  height: 48px;
+  margin-top: 4px;
+  border: none;
+  border-radius: 14px;
+  background: var(--app-primary);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(57, 121, 216, 0.25);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+
+  ion-icon {
+    font-size: 18px;
+  }
+
+  ion-spinner {
+    width: 18px;
+    height: 18px;
+    --color: #ffffff;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+    background: #2f68bc;
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.guest-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+  text-align: center;
+
+  .guest-text {
+    margin: 0 0 10px;
+    font-size: 12px;
+    color: var(--app-text-muted);
+    line-height: 1.45;
+  }
+
+  .dismiss-btn {
+    border: none;
+    background: transparent;
+    color: var(--app-primary);
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 8px;
+
+    &:active {
+      background: #f0f7ff;
+    }
+  }
+}
+
+/* ---------- Form Validation Snap & Pulse Animation ---------- */
+@keyframes snapShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-5px);
+  }
+  40%, 80% {
+    transform: translateX(5px);
+  }
+}
+
+.snap-pulse {
+  animation: snapShake 0.4s ease-in-out !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
 }

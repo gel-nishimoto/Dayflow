@@ -1,4 +1,6 @@
 import { Component, Input, inject, signal } from '@angular/core';
+import { Camera } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 import { IonContent, IonIcon, ModalController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import { closeOutline, playOutline, pauseOutline, refreshOutline, trashOutline } from 'ionicons/icons';
@@ -17,16 +19,26 @@ import type { VideoAttachment } from '../../models/activity.model';
 
         @if (video) {
           <div class="video-card">
-            <div class="video-stage" (click)="togglePlay()">
-              <img [src]="video.thumb" [alt]="video.title" />
-              <div class="play-badge">
-                <ion-icon [name]="playing() ? 'pause-outline' : 'play-outline'"></ion-icon>
+            @if (video.webPath) {
+              <video class="video-player" [src]="video.webPath" controls playsinline></video>
+            } @else {
+              <div
+                class="video-stage"
+                role="button"
+                tabindex="0"
+                (click)="togglePlay()"
+                (keydown.enter)="togglePlay()"
+              >
+                <img [src]="video.thumb" [alt]="video.title" />
+                <div class="play-badge">
+                  <ion-icon [name]="playing() ? 'pause-outline' : 'play-outline'"></ion-icon>
+                </div>
               </div>
-            </div>
+            }
             <div class="video-meta">
               <p class="v-title">{{ video.title }}</p>
               <p class="v-sub">
-                {{ playing() ? 'Playing simulated video preview...' : 'Tap play to preview clip' }} ·
+                {{ video.webPath ? 'Attached video clip' : (playing() ? 'Playing simulated video preview...' : 'Tap play to preview clip') }} ·
                 {{ video.duration }}
               </p>
             </div>
@@ -79,6 +91,14 @@ import type { VideoAttachment } from '../../models/activity.model';
         border-radius: 20px;
         overflow: hidden;
         color: #fff;
+      }
+      .video-player {
+        width: 100%;
+        max-height: 48vh;
+        border-radius: 20px 20px 0 0;
+        background: #000;
+        object-fit: contain;
+        display: block;
       }
       .video-stage {
         position: relative;
@@ -170,7 +190,15 @@ export class PhotoViewerComponent {
     addIcons({ closeOutline, playOutline, pauseOutline, refreshOutline, trashOutline });
   }
 
-  togglePlay(): void {
+  async togglePlay(): Promise<void> {
+    if (this.video?.uri && Capacitor.isNativePlatform()) {
+      try {
+        await Camera.playVideo({ uri: this.video.uri });
+        return;
+      } catch (e) {
+        console.warn('Native video playback failed, falling back to preview:', e);
+      }
+    }
     this.playing.update((v) => !v);
   }
 

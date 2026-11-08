@@ -56,7 +56,7 @@ export class CalendarPage {
   }
 
   // Previous/next moves the selected date by one week.
-  shiftWeek(weeks: number) {
+  shiftWeek(weeks: number): void {
     this.selected.set(toIso(addDays(fromIso(this.selected()), weeks * 7)));
   }
 }

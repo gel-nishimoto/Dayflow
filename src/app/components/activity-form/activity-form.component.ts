@@ -1,5 +1,5 @@
 import type { OnInit } from '@angular/core';
-import { ChangeDetectorRef, Component, Input, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
@@ -45,11 +45,11 @@ import type {
   Activity,
   ActivityStatus,
   CategoryItem,
+  Place,
   ReminderReference,
   VideoAttachment,
 } from '../../models/activity.model';
 import { REMINDER_PRESETS, STATUSES, formatReminderInterval } from '../../models/activity.model';
-import type { Place } from '../../data/sample-media';
 import { ActivityStore } from '../../services/activity-store';
 import { ToastService } from '../../services/toast.service';
 import { isoOffset, thisWeekIso, todayIso } from '../../utils/date-utils';
@@ -73,8 +73,11 @@ interface FormModel {
   reminderRef: ReminderReference;
   photos: string[];
   video?: VideoAttachment;
+  videos: VideoAttachment[];
   locationName?: string;
   locationAddress?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 @Component({
@@ -101,6 +104,7 @@ export class ActivityFormComponent implements OnInit {
   private modalCtrl = inject(ModalController);
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
+  private elRef = inject(ElementRef);
 
   statuses = STATUSES;
   reminderPresets = REMINDER_PRESETS;
@@ -123,6 +127,7 @@ export class ActivityFormComponent implements OnInit {
     reminderMinutes: 15,
     reminderRef: 'time',
     photos: [],
+    videos: [],
   };
 
   constructor() {
@@ -164,6 +169,10 @@ export class ActivityFormComponent implements OnInit {
     return this.submitted && !this.form.title.trim();
   }
 
+  get dateError(): boolean {
+    return this.submitted && !this.form.date;
+  }
+
   get deadlineError(): boolean {
     return this.submitted && !!this.form.deadline && this.form.deadline < this.form.date;
   }
@@ -176,15 +185,16 @@ export class ActivityFormComponent implements OnInit {
     return this.store.getCategoryByName(this.form.category);
   }
 
+  get totalAttachments(): number {
+    return this.form.photos.length + this.form.videos.length;
+  }
+
   get hasAttachments(): boolean {
-    return this.form.photos.length > 0 || !!this.form.video;
+    return this.totalAttachments > 0;
   }
 
   get attachmentCapacityText(): string {
-    if (this.form.video) {
-      return '1 of 1 video attached';
-    }
-    return `${this.form.photos.length} of 5 photos attached`;
+    return `${this.totalAttachments} of 5 attachments`;
   }
 
   get activeDateShortcut(): 'today' | 'tomorrow' | 'week' | 'custom' {
@@ -217,6 +227,7 @@ export class ActivityFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.activity) {
       const a = this.activity;
+      const loadedVideos: VideoAttachment[] = a.videos ? [...a.videos] : a.video ? [{ ...a.video }] : [];
       this.form = {
         title: a.title,
         description: a.description,
@@ -229,9 +240,12 @@ export class ActivityFormComponent implements OnInit {
         reminderMinutes: a.reminderMinutes ?? 15,
         reminderRef: a.reminderRef ?? (a.time ? 'time' : 'deadline'),
         photos: a.photos ? [...a.photos] : [],
-        video: a.video ? { ...a.video } : undefined,
+        video: a.video ? { ...a.video } : loadedVideos[0],
+        videos: loadedVideos,
         locationName: a.locationName,
         locationAddress: a.locationAddress,
+        latitude: a.latitude,
+        longitude: a.longitude,
       };
       const isPreset = REMINDER_PRESETS.some((p) => p.minutes === this.form.reminderMinutes);
       if (!isPreset) {
@@ -283,13 +297,15 @@ export class ActivityFormComponent implements OnInit {
     }
   }
 
-  // ---- Photo & Video Attachments (Simulated) ----
+  // ---- Photo & Video Attachments ----
   async openPhotoAttachment(replaceIndex?: number): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: CameraSheetComponent,
       componentProps: {
+        attachmentCount: this.totalAttachments,
         photoCount: this.form.photos.length,
-        hasVideo: !!this.form.video,
+        videoCount: this.form.videos.length,
+        hasVideo: this.form.videos.length > 0,
         replaceIndex,
       },
       breakpoints: [0, 0.85],
@@ -301,14 +317,24 @@ export class ActivityFormComponent implements OnInit {
       if (data.kind === 'photo' && data.photo) {
         if (replaceIndex !== undefined) {
           this.form.photos = this.form.photos.map((p, idx) => (idx === replaceIndex ? data.photo! : p));
-          this.toast.show('Photo replaced (demo)');
-        } else if (this.form.photos.length < 5 && !this.form.video) {
+          this.toast.show('Photo replaced');
+        } else if (this.totalAttachments < 5) {
           this.form.photos = [...this.form.photos, data.photo];
-          this.toast.show(`Photo attached (${this.form.photos.length} of 5)`);
+          this.toast.show(`Photo attached (${this.totalAttachments} of 5)`);
         }
-      } else if (data.kind === 'video' && data.video && this.form.photos.length === 0) {
-        this.form.video = data.video;
-        this.toast.show('Sample video attached (demo)');
+      } else if (data.kind === 'multiple' && data.photos) {
+        const remaining = 5 - this.totalAttachments;
+        const toAdd = data.photos.slice(0, remaining);
+        this.form.photos = [...this.form.photos, ...toAdd];
+        this.toast.show(
+          `${toAdd.length} ${toAdd.length === 1 ? 'photo' : 'photos'} attached (${this.totalAttachments} of 5)`,
+        );
+      } else if (data.kind === 'video' && data.video) {
+        if (this.totalAttachments < 5) {
+          this.form.videos = [...this.form.videos, data.video];
+          this.form.video = this.form.videos[0];
+          this.toast.show(`Video attached (${this.totalAttachments} of 5)`);
+        }
       }
       this.cdr.markForCheck();
     }
@@ -320,9 +346,10 @@ export class ActivityFormComponent implements OnInit {
     this.toast.show('Photo removed');
   }
 
-  removeVideo(event?: Event): void {
+  removeVideoAt(index: number, event?: Event): void {
     event?.stopPropagation();
-    this.form.video = undefined;
+    this.form.videos = this.form.videos.filter((_, i) => i !== index);
+    this.form.video = this.form.videos.length > 0 ? this.form.videos[0] : undefined;
     this.toast.show('Video removed');
   }
 
@@ -343,37 +370,46 @@ export class ActivityFormComponent implements OnInit {
     }
   }
 
-  async previewVideo(): Promise<void> {
-    if (!this.form.video) return;
+  async previewVideoAt(index: number): Promise<void> {
+    const video = this.form.videos[index];
+    if (!video) return;
     const modal = await this.modalCtrl.create({
       component: PhotoViewerComponent,
-      componentProps: { video: this.form.video, allowEdit: true },
+      componentProps: { video, allowEdit: true },
     });
     await modal.present();
     const { role } = await modal.onDidDismiss();
     if (role === 'remove') {
-      this.removeVideo();
+      this.removeVideoAt(index);
       this.cdr.markForCheck();
     }
   }
 
-  // ---- Location Selection (Simulated) ----
+  // ---- Location Selection ----
   async openLocation(): Promise<void> {
     const initial: Place | undefined = this.hasLocation
-      ? { name: this.form.locationName!, address: this.form.locationAddress ?? '' }
+      ? {
+          name: this.form.locationName!,
+          address: this.form.locationAddress ?? '',
+          lat: this.form.latitude,
+          lng: this.form.longitude,
+        }
       : undefined;
     const modal = await this.modalCtrl.create({
       component: LocationSheetComponent,
       componentProps: { initial },
       breakpoints: [0, 0.95],
       initialBreakpoint: 0.95,
+      canDismiss: async (_data, role) => role !== 'gesture',
     });
     await modal.present();
     const { data, role } = await modal.onDidDismiss<Place>();
     if (role === 'confirm' && data) {
       this.form.locationName = data.name;
       this.form.locationAddress = data.address;
-      this.toast.show('Location selected (demo)');
+      this.form.latitude = data.lat;
+      this.form.longitude = data.lng;
+      await this.toast.show('Location updated');
       this.cdr.markForCheck();
     }
   }
@@ -381,6 +417,8 @@ export class ActivityFormComponent implements OnInit {
   removeLocation(): void {
     this.form.locationName = undefined;
     this.form.locationAddress = undefined;
+    this.form.latitude = undefined;
+    this.form.longitude = undefined;
     this.toast.show('Location removed');
   }
 
@@ -426,7 +464,26 @@ export class ActivityFormComponent implements OnInit {
 
   save(): void {
     this.submitted = true;
-    if (this.titleError || this.deadlineError || !this.form.date) return;
+
+    if (this.titleError) {
+      this.snapToField('title');
+      return;
+    }
+
+    if (this.dateError) {
+      this.snapToField('date');
+      return;
+    }
+
+    if (this.deadlineError) {
+      this.snapToField('deadline');
+      return;
+    }
+
+    if (!this.form.category?.trim()) {
+      this.snapToField('category');
+      return;
+    }
 
     const finalMinutes = this.customReminderMode
       ? Math.max(1, Number(this.customMinutesInput) || 15)
@@ -447,11 +504,34 @@ export class ActivityFormComponent implements OnInit {
       reminderMinutes: reminderEnabled ? finalMinutes : undefined,
       reminderRef: reminderEnabled ? this.form.reminderRef : undefined,
       photos: this.form.photos.length ? [...this.form.photos] : undefined,
-      video: this.form.video ? { ...this.form.video } : undefined,
+      video: this.form.videos.length ? { ...this.form.videos[0] } : undefined,
+      videos: this.form.videos.length ? [...this.form.videos] : undefined,
       locationName: this.form.locationName,
       locationAddress: this.form.locationAddress,
+      latitude: this.form.latitude,
+      longitude: this.form.longitude,
     };
 
     this.modalCtrl.dismiss(payload, 'save');
+  }
+
+  private snapToField(fieldId: string): void {
+    setTimeout(() => {
+      const host = this.elRef.nativeElement as HTMLElement;
+      const el = host.querySelector(`#${fieldId}`) as HTMLElement | null;
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        try {
+          el.focus({ preventScroll: true });
+        } catch {
+          // Focus fallback for non-input elements
+        }
+        el.classList.remove('snap-pulse');
+        // Force reflow to re-trigger pulse animation
+        void el.offsetWidth;
+        el.classList.add('snap-pulse');
+        setTimeout(() => el.classList.remove('snap-pulse'), 1200);
+      }
+    }, 50);
   }
 }

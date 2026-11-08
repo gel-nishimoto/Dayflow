@@ -43,9 +43,9 @@
           <span class="media-cap">{{ attachmentCapacityText }}</span>
         </div>
 
-        @if (form.video; as vid) {
-          <div class="sq-grid">
-            <div class="sq-tile video-tile" role="button" tabindex="0" (click)="previewVideo()">
+        <div class="sq-grid">
+          @for (vid of form.videos; track $index) {
+            <div class="sq-tile video-tile" role="button" tabindex="0" (click)="previewVideoAt($index)">
               <img [src]="vid.thumb" [alt]="vid.title" />
               <span class="play-ov"><ion-icon name="play-circle"></ion-icon></span>
               <span class="vid-tag">
@@ -55,40 +55,39 @@
                 type="button"
                 class="sq-remove"
                 aria-label="Remove video"
-                (click)="removeVideo($event)"
+                (click)="removeVideoAt($index, $event)"
               >
                 <ion-icon name="close-outline"></ion-icon>
               </button>
             </div>
-          </div>
-        } @else {
-          <div class="sq-grid">
-            @for (img of form.photos; track $index) {
-              <div class="sq-tile" role="button" tabindex="0" (click)="previewPhotoAt($index)">
-                <img [src]="img" [alt]="'Attached photo ' + ($index + 1)" />
-                <button
-                  type="button"
-                  class="sq-remove"
-                  [attr.aria-label]="'Remove photo ' + ($index + 1)"
-                  (click)="removePhotoAt($index, $event)"
-                >
-                  <ion-icon name="close-outline"></ion-icon>
-                </button>
-              </div>
-            }
-            @if (form.photos.length < 5) {
+          }
+
+          @for (img of form.photos; track $index) {
+            <div class="sq-tile" role="button" tabindex="0" (click)="previewPhotoAt($index)">
+              <img [src]="img" [alt]="'Attached photo ' + ($index + 1)" />
               <button
                 type="button"
-                class="sq-tile sq-add"
-                aria-label="Add another photo"
-                (click)="openPhotoAttachment()"
+                class="sq-remove"
+                [attr.aria-label]="'Remove photo ' + ($index + 1)"
+                (click)="removePhotoAt($index, $event)"
               >
-                <ion-icon name="add-outline"></ion-icon>
-                <span>Add Photo</span>
+                <ion-icon name="close-outline"></ion-icon>
               </button>
-            }
-          </div>
-        }
+            </div>
+          }
+
+          @if (totalAttachments < 5) {
+            <button
+              type="button"
+              class="sq-tile sq-add"
+              aria-label="Add another attachment"
+              (click)="openPhotoAttachment()"
+            >
+              <ion-icon name="add-outline"></ion-icon>
+              <span>Add Media</span>
+            </button>
+          }
+        </div>
       </div>
     }
 
@@ -173,11 +172,15 @@
           #dateInputRef
           id="date"
           class="input"
+          [class.invalid]="dateError"
           type="date"
           name="date"
           [(ngModel)]="form.date"
           (ngModelChange)="onScheduleChange()"
         />
+        @if (dateError) {
+          <p class="error">Please select a schedule date.</p>
+        }
       </div>
 
       <div class="two-col">
@@ -228,7 +231,7 @@
         <button type="button" class="clear-link" (click)="openCategoryModal()">Manage Categories</button>
       </div>
 
-      <button type="button" class="cat-selector" (click)="openCategoryModal()">
+      <button type="button" id="category" class="cat-selector" (click)="openCategoryModal()">
         <span class="cat-badge-ic" [style.color]="selectedCategoryItem.color">
           <ion-icon [name]="selectedCategoryItem.icon"></ion-icon>
         </span>

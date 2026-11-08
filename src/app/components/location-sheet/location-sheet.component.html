@@ -1,67 +1,144 @@
 <ion-content>
   <div class="sheet">
-    <h2>{{ readOnly ? 'Location' : 'Select Location' }}</h2>
+    <div class="sheet-top">
+      <h2>{{ readOnly ? 'Location' : 'Select Location' }}</h2>
+      <button type="button" class="icon-close" aria-label="Close" (click)="cancel()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+    </div>
 
-    <app-map-placeholder [tall]="true" [label]="selected()?.name ?? 'No location selected'"></app-map-placeholder>
-
-    @if (readOnly) {
-      @if (selected(); as s) {
-        <div class="selected">
-          <ion-icon name="location-outline"></ion-icon>
-          <div>
-            <p class="name">{{ s.name }}</p>
-            <p class="addr">{{ s.address }}</p>
-          </div>
-        </div>
-      }
-      <p class="note">Map preview (demo only). A real map will be added later.</p>
-      <div class="actions">
-        <button type="button" class="btn btn-primary" (click)="cancel()">Close</button>
-      </div>
-    } @else {
-      <div class="search">
-        <ion-icon name="search-outline"></ion-icon>
+    @if (!readOnly) {
+      <!-- Explicitly Type Location Bar -->
+      <div class="search-bar">
+        <ion-icon class="search-icon" name="search-outline"></ion-icon>
         <input
           type="text"
-          placeholder="Search a place or address"
-          aria-label="Search a place or address"
+          class="search-input"
+          placeholder="Type an address or location name..."
+          aria-label="Location search"
           [ngModel]="query()"
           (ngModelChange)="query.set($event)"
+          (keyup.enter)="searchAndRelocate()"
         />
-      </div>
-
-      <button type="button" class="current" (click)="useCurrentLocation()">
-        <ion-icon name="navigate-outline"></ion-icon> Use Current Location
-      </button>
-
-      <div class="results">
-        @for (p of results(); track p.name) {
-          <button type="button" class="place" [class.active]="selected()?.name === p.name" (click)="pick(p)">
-            <ion-icon name="location-outline"></ion-icon>
-            <span class="txt">
-              <span class="name">{{ p.name }}</span>
-              <span class="addr">{{ p.address }}</span>
-            </span>
-            @if (selected()?.name === p.name) {
-              <ion-icon name="checkmark-circle" class="tick"></ion-icon>
-            }
+        @if (query()) {
+          <button type="button" class="clear-btn" aria-label="Clear input" (click)="clearQuery()">
+            <ion-icon name="close-circle"></ion-icon>
           </button>
-        } @empty {
-          <p class="note">No matching sample places.</p>
         }
-      </div>
-
-      @if (selected(); as s) {
-        <p class="chosen"><strong>Selected:</strong> {{ s.name }}</p>
-      }
-
-      <div class="actions">
-        <button type="button" class="btn btn-ghost" (click)="cancel()">Cancel</button>
-        <button type="button" class="btn btn-primary" [disabled]="!selected()" (click)="confirm()">
-          Confirm Location
+        <button
+          type="button"
+          class="go-btn"
+          aria-label="Search and relocate pin"
+          [disabled]="searching() || !query().trim()"
+          (click)="searchAndRelocate()"
+        >
+          @if (searching()) {
+            <ion-spinner name="crescent"></ion-spinner>
+          } @else {
+            <ion-icon name="arrow-forward-outline"></ion-icon>
+          }
         </button>
       </div>
+
+      @if (permissionDenied()) {
+        <div class="permission-banner">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <span>Location Permission Denied. You can still search for places or tap the map manually.</span>
+        </div>
+      }
     }
+
+    <!-- Interactive Leaflet Map Container -->
+    <div
+      #mapWrapper
+      class="map-wrapper"
+      (touchstart)="stopSheetDrag($event)"
+      (mousedown)="stopSheetDrag($event)"
+      (pointerdown)="stopSheetDrag($event)"
+    >
+      <div #mapContainer class="map-view" id="location-sheet-map"></div>
+
+      @if (!readOnly) {
+        <!-- Locate Me Floating Button -->
+        <button
+          type="button"
+          class="locate-fab"
+          aria-label="Pinpoint current location"
+          [disabled]="locating()"
+          (click)="locateCurrentPosition()"
+        >
+          @if (locating()) {
+            <ion-spinner name="crescent"></ion-spinner>
+          } @else {
+            <ion-icon name="locate-outline"></ion-icon>
+          }
+          <span>Current Location</span>
+        </button>
+
+        <!-- Relocation Hint Badge -->
+        <div class="map-hint-badge">
+          <ion-icon name="location"></ion-icon>
+          <span>Tap map or drag pin to relocate</span>
+        </div>
+      }
+    </div>
+
+    @if (!readOnly && suggestedPlaces.length > 0) {
+      <!-- Suggested Places Chips -->
+      <div class="quick-places-section">
+        <span class="quick-label">Suggestions:</span>
+        <div class="quick-chips-row">
+          @for (p of suggestedPlaces; track p.name) {
+            <button
+              type="button"
+              class="place-chip"
+              [class.active]="selected()?.name === p.name"
+              (click)="pickSuggestedPlace(p)"
+            >
+              <ion-icon name="location-outline"></ion-icon>
+              <span>{{ p.name }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Selected Location Info Card -->
+    @if (selected(); as s) {
+      <div class="selected-card">
+        <div class="card-icon">
+          <ion-icon name="location"></ion-icon>
+        </div>
+        <div class="card-details">
+          <div class="name-row">
+            <span class="place-name">{{ s.name }}</span>
+            @if (resolvingAddress()) {
+              <ion-spinner name="dots" class="resolving-spinner"></ion-spinner>
+            }
+          </div>
+          <span class="place-address">{{ s.address }}</span>
+          @if (selectedCoordsText) {
+            <span class="place-coords">Coordinates: {{ selectedCoordsText }}</span>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Bottom Actions -->
+    <div class="actions">
+      @if (readOnly) {
+        <button type="button" class="btn btn-primary" (click)="cancel()">Close</button>
+      } @else {
+        <button type="button" class="btn btn-ghost" (click)="cancel()">Cancel</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="!selected() || locating() || resolvingAddress()"
+          (click)="confirm()"
+        >
+          Confirm Location
+        </button>
+      }
+    </div>
   </div>
 </ion-content>
-

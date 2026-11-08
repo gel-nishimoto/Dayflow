@@ -1,3 +1,4 @@
+import { provideHttpClient } from '@angular/common/http';
 import type { ComponentFixture } from '@angular/core/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
@@ -10,7 +11,7 @@ describe('HomePage', () => {
   let fixture: ComponentFixture<HomePage>;
 
   beforeEach(async () => {
-    TestBed.configureTestingModule({ providers: [provideRouter([]), provideIonicAngular()] });
+    TestBed.configureTestingModule({ providers: [provideRouter([]), provideIonicAngular(), provideHttpClient()] });
     fixture = TestBed.createComponent(HomePage);
     component = fixture.componentInstance;
     fixture.detectChanges();

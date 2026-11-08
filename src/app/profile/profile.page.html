@@ -3,19 +3,86 @@
     <h1 class="screen-title">Profile</h1>
 
     <section class="hero">
-      <div class="avatar">{{ initials() }}</div>
+      <div class="avatar" [class.guest-avatar]="!isLoggedIn()">{{ initials() }}</div>
       <h2>{{ name() }}</h2>
       <p>{{ completed() }} tasks completed</p>
+      @if (!isLoggedIn()) {
+        <span class="guest-badge">Guest Mode (In-memory)</span>
+      }
     </section>
 
     <section class="group">
-      @for (i of info; track i.label) {
-        <div class="row">
-          <span class="icon"><ion-icon [name]="i.icon"></ion-icon></span>
-          <div class="text">
-            <span class="small">{{ i.label }}</span>
-            <span class="value">{{ i.value }}</span>
-          </div>
+      @if (!isLoggedIn()) {
+        <div class="guest-info-banner">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <span>Sign in to enter your email, phone, and school and sync with the database.</span>
+        </div>
+      }
+
+      <div class="row input-row">
+        <span class="icon"><ion-icon name="mail-outline"></ion-icon></span>
+        <div class="text">
+          <label class="small" for="profile-email">Email</label>
+          <input
+            id="profile-email"
+            class="profile-input"
+            type="email"
+            name="email"
+            [placeholder]="isLoggedIn() ? 'Enter your email' : 'Available when logged in'"
+            [(ngModel)]="email"
+            [disabled]="!isLoggedIn()"
+          />
+        </div>
+      </div>
+
+      <div class="row input-row">
+        <span class="icon"><ion-icon name="call-outline"></ion-icon></span>
+        <div class="text">
+          <label class="small" for="profile-phone">Phone</label>
+          <input
+            id="profile-phone"
+            class="profile-input"
+            type="tel"
+            name="phone"
+            [placeholder]="isLoggedIn() ? 'Enter your phone number' : 'Available when logged in'"
+            [(ngModel)]="phone"
+            [disabled]="!isLoggedIn()"
+          />
+        </div>
+      </div>
+
+      <div class="row input-row">
+        <span class="icon"><ion-icon name="school-outline"></ion-icon></span>
+        <div class="text">
+          <label class="small" for="profile-school">School</label>
+          <input
+            id="profile-school"
+            class="profile-input"
+            type="text"
+            name="school"
+            [placeholder]="isLoggedIn() ? 'Enter your school / university' : 'Available when logged in'"
+            [(ngModel)]="school"
+            [disabled]="!isLoggedIn()"
+          />
+        </div>
+      </div>
+
+      @if (isLoggedIn()) {
+        <div class="save-row">
+          <button
+            type="button"
+            class="save-btn"
+            [disabled]="saving()"
+            (click)="saveProfileDetails()"
+          >
+            @if (saving()) {
+              <ion-spinner name="crescent"></ion-spinner>
+              <span>Saving...</span>
+            } @else {
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              <span>Save Details</span>
+            }
+          </button>
         </div>
       }
     </section>
@@ -64,7 +131,7 @@
       <button
         type="button"
         class="row link"
-        (click)="showInfo('About', 'Dayflow v0.1 - UI prototype with sample data.')"
+        (click)="showInfo('About', 'Dayflow - Daily activity and task planner.')"
       >
         <span class="icon"><ion-icon name="information-circle-outline"></ion-icon></span>
         <span class="text"><span class="value">About</span></span>
@@ -72,9 +139,15 @@
       </button>
     </section>
 
-    <button type="button" class="logout" (click)="logout()">
-      <ion-icon name="log-out-outline"></ion-icon> Log out
-    </button>
+    @if (isLoggedIn()) {
+      <button type="button" class="logout" (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon> Log out
+      </button>
+    } @else {
+      <button type="button" class="login-btn" (click)="openLoginModal()">
+        <ion-icon name="log-in-outline"></ion-icon> Log in
+      </button>
+    }
   </div>
 </ion-content>
 

@@ -27,7 +27,7 @@ export class NotificationsPage {
     addIcons({ alarmOutline, flagOutline, alertCircleOutline, chevronBackOutline });
   }
 
-  markAllRead() {
+  markAllRead(): void {
     this.store.markAllRead();
     this.toast.show('All notifications marked as read');
   }

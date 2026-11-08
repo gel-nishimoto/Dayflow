@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, computed, inject, signal } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { Component, Input, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AlertController, IonContent, IonFooter, IonHeader, IonIcon, IonTitle, IonToolbar, ModalController } from '@ionic/angular';
 import { addIcons } from 'ionicons';
@@ -181,7 +182,7 @@ export class CategorySheetComponent implements OnInit {
     const usedCount = this.store.countActivitiesUsingCategory(cat.name);
     const message =
       usedCount > 0
-        ? `"${cat.name}" is currently used by ${usedCount} sample ${usedCount === 1 ? 'activity' : 'activities'}. Deleting it will reassign ${usedCount === 1 ? 'that activity' : 'those activities'} to "Others".`
+        ? `"${cat.name}" is currently used by ${usedCount} ${usedCount === 1 ? 'activity' : 'activities'}. Deleting it will reassign ${usedCount === 1 ? 'that activity' : 'those activities'} to "Others".`
         : `Are you sure you want to delete "${cat.name}"?`;
 
     const alert = await this.alertCtrl.create({

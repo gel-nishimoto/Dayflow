@@ -17,7 +17,7 @@ export class ActivityActions {
   private toast = inject(ToastService);
 
   // Add (no activity) or Edit (with activity) form.
-  async openForm(activity?: Activity, defaultDate?: string) {
+  async openForm(activity?: Activity, defaultDate?: string): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: ActivityFormComponent,
       componentProps: { activity, defaultDate },
@@ -28,14 +28,18 @@ export class ActivityActions {
 
     if (activity) {
       this.store.update(data);
-      this.toast.show('Activity updated');
+      if (!this.store.isDueTomorrow(data)) {
+        await this.toast.show('Activity updated');
+      }
     } else {
       this.store.add(data);
-      this.toast.show('Activity added');
+      if (!this.store.isDueTomorrow(data)) {
+        await this.toast.show('Activity added');
+      }
     }
   }
 
-  async openDetail(activity: Activity) {
+  async openDetail(activity: Activity): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: ActivityDetailComponent,
       componentProps: { activityId: activity.id },
@@ -45,11 +49,11 @@ export class ActivityActions {
     });
     await modal.present();
     const { role } = await modal.onDidDismiss();
-    if (role === 'edit') this.openForm(activity);
-    if (role === 'delete') this.confirmDelete(activity);
+    if (role === 'edit') await this.openForm(activity);
+    if (role === 'delete') await this.confirmDelete(activity);
   }
 
-  async confirmDelete(activity: Activity) {
+  async confirmDelete(activity: Activity): Promise<void> {
     const alert = await this.alertCtrl.create({
       header: 'Delete activity?',
       message: `"${activity.title}" will be removed from your list.`,
@@ -69,7 +73,7 @@ export class ActivityActions {
   }
 
   // Circle tap: completed <-> pending
-  toggle(activity: Activity) {
+  toggle(activity: Activity): void {
     const done = activity.status !== 'completed';
     this.store.setStatus(activity.id, done ? 'completed' : 'pending');
     this.toast.show(done ? 'Marked as completed' : 'Moved back to pending');

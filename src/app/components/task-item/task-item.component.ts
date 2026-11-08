@@ -1,7 +1,7 @@
 import { Component, input, output } from '@angular/core';
 import { IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { checkmark, imageOutline, locationOutline, timeOutline, videocamOutline } from 'ionicons/icons';
+import { checkmark, timeOutline } from 'ionicons/icons';
 
 import type { Activity } from '../../models/activity.model';
 import { DateLabelPipe, Time12Pipe } from '../../pipes/format.pipes';
@@ -15,10 +15,11 @@ import { DateLabelPipe, Time12Pipe } from '../../pipes/format.pipes';
 export class TaskItemComponent {
   task = input.required<Activity>();
   showDate = input(false);
+  // eslint-disable-next-line @angular-eslint/no-output-native
   toggle = output<Activity>();
   openTask = output<Activity>();
 
   constructor() {
-    addIcons({ checkmark, timeOutline, imageOutline, videocamOutline, locationOutline });
+    addIcons({ checkmark, timeOutline });
   }
 }

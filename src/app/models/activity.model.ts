@@ -14,6 +14,15 @@ export interface VideoAttachment {
   thumb: string;
   title: string;
   duration: string;
+  uri?: string;
+  webPath?: string;
+}
+
+export interface Place {
+  name: string;
+  address: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface Activity {
@@ -28,11 +37,14 @@ export interface Activity {
   reminder: boolean;
   reminderMinutes?: number; // e.g. 5, 10, 15, 30, 60, 120, 1440, or custom
   reminderRef?: ReminderReference;
-  // Optional attachments (up to 5 photos OR 1 video, never mixed)
+  // Optional attachments (up to 5 attachments overall)
   photos?: string[];
   video?: VideoAttachment;
+  videos?: VideoAttachment[];
   locationName?: string;
   locationAddress?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export const STATUSES: ActivityStatus[] = ['pending', 'ongoing', 'completed', 'cancelled'];

@@ -113,12 +113,13 @@ export class ActivityDetailComponent {
     await modal.present();
   }
 
-  async viewLocation(name: string, address: string): Promise<void> {
+  async viewLocation(name: string, address: string, lat?: number, lng?: number): Promise<void> {
     const modal = await this.modalCtrl.create({
       component: LocationSheetComponent,
-      componentProps: { readOnly: true, initial: { name, address } },
-      breakpoints: [0, 0.8],
-      initialBreakpoint: 0.8,
+      componentProps: { readOnly: true, initial: { name, address, lat, lng } },
+      breakpoints: [0, 0.85],
+      initialBreakpoint: 0.85,
+      canDismiss: async (_data, role) => role !== 'gesture',
     });
     await modal.present();
   }
