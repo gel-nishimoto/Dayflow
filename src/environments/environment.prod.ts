@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost/dayflow-api',
-  apiUrl: 'http://localhost/dayflow-api',
+  apiBaseUrl: 'http://192.168.254.119/dayflow-api',
+  apiUrl: 'http://192.168.254.119/dayflow-api',
 };

@@ -1,6 +1,7 @@
 import type { HttpErrorResponse } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import type { Observable } from 'rxjs';
 import { catchError, map, throwError } from 'rxjs';
 
@@ -34,11 +35,16 @@ export class ActivityApiService {
     const rawUrl =
       (environment as { apiUrl?: string; apiBaseUrl?: string }).apiUrl ||
       environment.apiBaseUrl ||
-      'http://localhost/dayflow-api';
+      'http://192.168.254.119/dayflow-api';
 
-    // When testing on a mobile phone via browser (e.g. ionic serve --external),
-    // 'localhost' in rawUrl points to the mobile device itself instead of your PC.
-    // Replace 'localhost' or '127.0.0.1' with the active host IP from the browser window.
+    // 1. When running natively in the APK (Capacitor), localhost points to the phone itself.
+    // If rawUrl still points to localhost, rewrite it to your PC's local Wi-Fi IP address.
+    if (Capacitor.isNativePlatform()) {
+      return rawUrl.replace(/:\/\/(localhost|127\.0\.0\.1)/, '://192.168.254.119');
+    }
+
+    // 2. When testing in a mobile browser (e.g. ionic serve --external),
+    // replace localhost with the active host IP from the browser window.
     if (typeof window !== 'undefined' && window.location?.hostname) {
       const host = window.location.hostname;
       if (host !== 'localhost' && host !== '127.0.0.1' && !host.endsWith('.localhost')) {
