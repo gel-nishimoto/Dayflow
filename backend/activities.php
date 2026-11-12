@@ -1,37 +1,8 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/cors.php';
 require_once __DIR__ . '/config.php';
-
-// Development CORS allow-list. Add your app's exact origin if needed.
-$allowedOrigins = [
-    'http://localhost',
-    'http://localhost:8100',
-    'http://127.0.0.1:8100',
-    'http://localhost:4200',
-    'https://localhost',
-    'capacitor://localhost',
-    'ionic://localhost',
-];
-
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if ($origin !== '' && in_array($origin, $allowedOrigins, true)) {
-    header('Access-Control-Allow-Origin: ' . $origin);
-    header('Vary: Origin');
-} elseif ($origin !== '' && preg_match('#^https?://(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$#', $origin)) {
-    // Also allow local network IP origins for testing on mobile phones over Wi-Fi
-    header('Access-Control-Allow-Origin: ' . $origin);
-    header('Vary: Origin');
-}
-
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-header('Content-Type: application/json; charset=utf-8');
-
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204);
-    exit;
-}
 
 function respond(int $status, array $payload): void
 {

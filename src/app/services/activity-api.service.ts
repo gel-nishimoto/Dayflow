@@ -258,6 +258,8 @@ export class ActivityApiService {
       message = Object.values(error.error.errors).join(' ');
     } else if (error.status === 0) {
       message = 'Cannot reach backend server. Please verify PHP RESTful API is running.';
+    } else if (error.status === 200) {
+      message = 'Server returned an unexpected (non-JSON) response.';
     }
     return throwError(() => new Error(message));
   }
