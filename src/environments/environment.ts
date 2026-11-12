@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://dayflow.free.nf/backend',
+  apiUrl: 'https://ws07dayflow.x10.mx/backend',
 };
