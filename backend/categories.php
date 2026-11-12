@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 
+// Development CORS allow-list. Add your app's exact origin if needed.
 $allowedOrigins = [
     'http://localhost',
     'http://localhost:8100',
@@ -185,7 +186,10 @@ try {
     if ($e->getCode() === '23000') {
         respond(409, ['success' => false, 'message' => 'A category with that name already exists.']);
     }
-    respond(500, ['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+
+    error_log('Categories API database error: ' . $e->getMessage());
+    respond(500, ['success' => false, 'message' => 'Database error. Check the PHP error log.']);
 } catch (Throwable $e) {
-    respond(500, ['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
+    error_log('Categories API unexpected error: ' . $e->getMessage());
+    respond(500, ['success' => false, 'message' => 'Internal server error.']);
 }

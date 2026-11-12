@@ -7,11 +7,11 @@ declare(strict_types=1);
  */
 function get_db_connection(): PDO
 {
-    $host = getenv('DB_HOST') ?: '127.0.0.1';
+    $host = getenv('DB_HOST') ?: 'sql305.infinityfree.com';
     $port = getenv('DB_PORT') ?: '3306';
-    $db   = getenv('DB_NAME') ?: 'dayflow_db';
-    $user = getenv('DB_USER') ?: 'root';
-    $pass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : '';
+    $db   = getenv('DB_NAME') ?: 'if0_43417176_dayflow';
+    $user = getenv('DB_USER') ?: 'if0_43417176';
+    $pass = getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'dayflow1320';
     $charset = 'utf8mb4';
 
     $dsn = "mysql:host=$host;port=$port;dbname=$db;charset=$charset";

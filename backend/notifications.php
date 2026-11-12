@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 
+// Development CORS allow-list. Add your app's exact origin if needed.
 $allowedOrigins = [
     'http://localhost',
     'http://localhost:8100',
@@ -38,6 +39,21 @@ function respond(int $status, array $payload): void
     exit;
 }
 
+function read_json_body(): array
+{
+    $raw = file_get_contents('php://input');
+    if ($raw === false || trim($raw) === '') {
+        respond(400, ['success' => false, 'message' => 'Request body is required.']);
+    }
+
+    $decoded = json_decode($raw, true);
+    if (!is_array($decoded)) {
+        respond(400, ['success' => false, 'message' => 'Invalid JSON request body.']);
+    }
+
+    return $decoded;
+}
+
 function format_notification(array $row): array
 {
     return [
@@ -63,11 +79,7 @@ try {
             respond(200, ['success' => true, 'data' => array_map('format_notification', $rows)]);
 
         case 'POST':
-            $raw = file_get_contents('php://input');
-            $input = json_decode($raw, true);
-            if (!is_array($input)) {
-                $input = $_POST;
-            }
+            $input = read_json_body();
 
             $type = $input['type'] ?? 'deadline';
             $title = trim((string)($input['title'] ?? ''));
@@ -149,7 +161,9 @@ try {
             respond(405, ['success' => false, 'message' => 'Method not allowed.']);
     }
 } catch (PDOException $e) {
-    respond(500, ['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    error_log('Notifications API database error: ' . $e->getMessage());
+    respond(500, ['success' => false, 'message' => 'Database error. Check the PHP error log.']);
 } catch (Throwable $e) {
-    respond(500, ['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
+    error_log('Notifications API unexpected error: ' . $e->getMessage());
+    respond(500, ['success' => false, 'message' => 'Internal server error.']);
 }

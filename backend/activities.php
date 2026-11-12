@@ -246,8 +246,8 @@ try {
     }
 } catch (PDOException $e) {
     error_log('Activities API database error: ' . $e->getMessage());
-    respond(500, ['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    respond(500, ['success' => false, 'message' => 'Database error. Check the PHP error log.']);
 } catch (Throwable $e) {
     error_log('Activities API unexpected error: ' . $e->getMessage());
-    respond(500, ['success' => false, 'message' => 'Internal server error: ' . $e->getMessage()]);
+    respond(500, ['success' => false, 'message' => 'Internal server error.']);
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/config.php';
 
+// Development CORS allow-list. Add your app's exact origin if needed.
 $allowedOrigins = [
     'http://localhost',
     'http://localhost:8100',
@@ -192,7 +193,9 @@ try {
             respond(405, ['success' => false, 'message' => 'Method not allowed.']);
     }
 } catch (PDOException $e) {
-    respond(500, ['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    error_log('Profile API database error: ' . $e->getMessage());
+    respond(500, ['success' => false, 'message' => 'Database error. Check the PHP error log.']);
 } catch (Throwable $e) {
-    respond(500, ['success' => false, 'message' => 'Server error: ' . $e->getMessage()]);
+    error_log('Profile API unexpected error: ' . $e->getMessage());
+    respond(500, ['success' => false, 'message' => 'Internal server error.']);
 }
